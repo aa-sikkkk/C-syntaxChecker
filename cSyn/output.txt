@@ -1,0 +1,77 @@
+Line 1: #include <stdio.h>
+Line 2: #include <stdlib.h>
+Line 3: int main() {
+Line 4:     int a = 5;
+Line 5:     int b = 10
+Line 6:     Line 7:     printf("This is a test program.\n")
+Line 8:     Line 9:     if (a > b {
+Line 10:         printf("a is greater than b\n");
+Line 11:     else {
+Line 12:         printf("a is less than or equal to b\n");
+Line 13:     }
+Line 14:     Line 15:     floot c = 3.14;
+Line 16:     Line 17:     prntf("Value of c: %f\n", c);
+Line 18:     Line 19:     for int i = 0; i < 5; i++) {
+Line 20:         printf("i = %d\n", i);
+Line 21:     }
+Line 22:     Line 23:     int result = multiply(a, b);
+Line 24:     printf("Result: %d\n", result);
+Line 25:     Line 26:     int multiply(int x, int y) {
+Line 27:         return x * y;
+Line 28:     }
+Line 29:     Line 30:     int arr[5 = {1, 2, 3, 4, 5};
+Line 31:     Line 32:     int *p = &a;
+Line 33:     printf("Value pointed by p: %d\n", *p);
+Line 34:     p + 1; Line 35:     Line 36:     char *str = malloc(50);
+Line 37:     strcpy(str, "Hello, World!");
+Line 38:     Line 39:     while (a < 20);
+Line 40:         printf("a is less than 20\n");
+Line 41:     Line 42:     int x, y;
+Line 43:     Line 44:     return 0;
+Line 45: int multiply(int x, int y) {
+Line 46:     return x * y;
+Line 47: }
+Line 48: Error: Mismatched brackets detected.
+Line 3: Found keyword 'int'
+Line 4: Found keyword 'int'
+Line 5: Found keyword 'int'
+Line 7: Found keyword 'int'
+Line 9: Found keyword 'if'
+Line 10: Found keyword 'int'
+Line 11: Found keyword 'else'
+Line 12: Found keyword 'int'
+Line 19: Found keyword 'int'
+Line 19: Found keyword 'for'
+Line 20: Found keyword 'int'
+Line 23: Found keyword 'int'
+Line 24: Found keyword 'int'
+Line 26: Found keyword 'int'
+Line 27: Found keyword 'return'
+Line 30: Found keyword 'int'
+Line 32: Found keyword 'int'
+Line 33: Found keyword 'int'
+Line 39: Found keyword 'while'
+Line 40: Found keyword 'int'
+Line 42: Found keyword 'int'
+Line 44: Found keyword 'return'
+Line 45: Found keyword 'int'
+Line 46: Found keyword 'return'
+Number of functions: 4
+Number of function prototypes: 11
+Line 7: Found keyword usage 'printf'
+Line 10: Found keyword usage 'printf'
+Line 12: Found keyword usage 'printf'
+Line 20: Found keyword usage 'printf'
+Line 24: Found keyword usage 'printf'
+Line 33: Found keyword usage 'printf'
+Line 40: Found keyword usage 'printf'
+Line 36: Found built-in function usage 'malloc'
+Line 37: Found built-in function usage 'strcpy'
+Line 7: Found print function.
+Line 10: Found print function.
+Line 12: Found print function.
+Line 20: Found print function.
+Line 24: Found print function.
+Line 33: Found print function.
+Line 40: Found print function.
+Number of variables: 18
