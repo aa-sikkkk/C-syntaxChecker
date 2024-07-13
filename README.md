@@ -31,17 +31,30 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
   _|_|_|  _|    _|    _|_|_|    _|_|_|  _|    _|    _|_|_|  _|        
 ```
 
+
+
+
 ## 🚀 Usage
+
+**Note you can use Both <code>CLI</code> and <code>GUI</code> Version of the tool as per your convenience!**
+
 
 ### Prerequisites
 
 - Make sure you have `gcc` installed for compiling the C program.
 - Ensure the `bash` shell is available for running the script.
+- Install GCC Compiler Download and install GCC for Windows.
+- Install GTK+ Libraries
+- Download the GTK+ runtime environment for Windows from GTK Website.
+- Install <code>libgtk-3.dll</code> on your system. Ensure it's accessible in your system's PATH.
 
 ### Steps to Run
 
 1. **Clone the repository or download the source files.**
-2. **Open a terminal (or PowerShell) and navigate to the folder containing `main.c` and `synCheck.sh`.**
+    ```bash
+   git clone https://github.com/aa-sikkkk/C-syntaxChecker.git or downalod from https://github.com/aa-sikkkk/C-syntaxChecker/releases/
+   ```
+3. **Open a terminal (or PowerShell) and navigate to the folder containing `main.c` and `synCheck.sh`.**
 
    ```bash
    cd cSyn
@@ -49,6 +62,18 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
    FOR WINDOWS: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
    ./synCheck.sh
    ```
+   
+## 🚀 GUI
+Steps to Run (GUI Version)
+   - Download the executable file <CODE>analyzer.exe</CODE> from the [releases section](https://github.com/aa-sikkkk/C-syntaxChecker/releases/).
+   - Ensure you have the necessary <CODE>GTK libraries</CODE> installed.
+   - For Windows, install <CODE>libgtk-3-dev</CODE> and set the appropriate <CODE>environment variables</CODE>.
+   - Open a terminal or command prompt and navigate to the directory containing analyzer.exe.
+   - ./analyzer.exe
+<p align="center">
+   <img src="https://github.com/user-attachments/assets/791d5333-4628-474d-951c-1cc7739550d7">
+</p>
+
 
 ## 🤝 Contributing
 
