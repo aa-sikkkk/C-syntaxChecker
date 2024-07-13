@@ -48,7 +48,7 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
 - Download the GTK+ runtime environment for Windows from GTK Website.
 - Install <code>libgtk-3.dll</code> on your system. Ensure it's accessible in your system's PATH.
 
-### Steps to Run
+### Steps to Run CLI
 
 1. **Clone the repository or download the source files.**
     ```bash
