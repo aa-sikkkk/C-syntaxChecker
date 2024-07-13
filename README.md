@@ -1,10 +1,10 @@
-# C-SyntaxChecker
+# 🎉 C-SyntaxChecker 🎉
 
-## Overview
+## 📝 Overview
 
 C-SyntaxChecker is a tool designed to analyze C code for common syntax issues. It checks for bracket matching, keyword usage, function definitions, and more. This tool can help developers maintain clean and error-free code.
 
-## Features
+## 🌟 Features
 
 - **Bracket Checking:** Validates that all opening and closing brackets match.
 - **Keyword Usage:** Ensures keywords are used correctly throughout the code.
@@ -12,9 +12,9 @@ C-SyntaxChecker is a tool designed to analyze C code for common syntax issues. I
 - **Variable Counting:** Tracks declared variables.
 - **Print and Scan Functions Check:** Validates usage of print and scan functions.
 
-## ASCII Art Banner
+## 🎨 ASCII Art Banner
 
-<pre>
+```
    _|_|_|            _|_|_|                        _|              
 _|                _|        _|    _|  _|_|_|    _|_|_|_|    _|_|_|  _|    _|  
 _|    _|_|_|_|_|    _|_|    _|    _|  _|    _|    _|      _|    _|    _|_|    
@@ -29,10 +29,9 @@ _|        _|_|_|      _|_|      _|_|_|  _|  _|      _|_|    _|  _|_|
 _|        _|    _|  _|_|_|_|  _|        _|_|      _|_|_|_|  _|_|      
 _|        _|    _|  _|        _|        _|  _|    _|        _|        
   _|_|_|  _|    _|    _|_|_|    _|_|_|  _|    _|    _|_|_|  _|        
+```
 
-</pre>
-
-## Usage
+## 🚀 Usage
 
 ### Prerequisites
 
@@ -46,3 +45,16 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
 
    ```bash
    cd cSyn
+   chmod +x synCheck.sh
+   FOR WINDOWS: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ./synCheck.sh
+   ```
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have any ideas, suggestions, or bug reports, feel free to open an issue or submit a pull request.
+
+## 📜 License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
