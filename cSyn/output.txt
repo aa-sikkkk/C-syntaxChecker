@@ -2,76 +2,77 @@ Line 1: #include <stdio.h>
 Line 2: #include <stdlib.h>
 Line 3: int main() {
 Line 4:     int a = 5;
-Line 5:     int b = 10
-Line 6:     Line 7:     printf("This is a test program.\n")
-Line 8:     Line 9:     if (a > b {
-Line 10:         printf("a is greater than b\n");
-Line 11:     else {
-Line 12:         printf("a is less than or equal to b\n");
-Line 13:     }
-Line 14:     Line 15:     floot c = 3.14;
-Line 16:     Line 17:     prntf("Value of c: %f\n", c);
-Line 18:     Line 19:     for int i = 0; i < 5; i++) {
-Line 20:         printf("i = %d\n", i);
-Line 21:     }
-Line 22:     Line 23:     int result = multiply(a, b);
-Line 24:     printf("Result: %d\n", result);
-Line 25:     Line 26:     int multiply(int x, int y) {
-Line 27:         return x * y;
-Line 28:     }
-Line 29:     Line 30:     int arr[5 = {1, 2, 3, 4, 5};
-Line 31:     Line 32:     int *p = &a;
-Line 33:     printf("Value pointed by p: %d\n", *p);
-Line 34:     p + 1; Line 35:     Line 36:     char *str = malloc(50);
-Line 37:     strcpy(str, "Hello, World!");
-Line 38:     Line 39:     while (a < 20);
-Line 40:         printf("a is less than 20\n");
-Line 41:     Line 42:     int x, y;
-Line 43:     Line 44:     return 0;
-Line 45: int multiply(int x, int y) {
-Line 46:     return x * y;
-Line 47: }
-Line 48: Error: Mismatched brackets detected.
+Line 5:     int b = 10;
+Line 6:     printf("This is a test program.\n")
+Line 7:     if (a > b {
+Line 8:         printf("a is greater than b\n");
+Line 9:     else {
+Line 10:         printf("a is less than or equal to b\n");
+Line 11:     }
+Line 12:     floot c = 3.14;
+Line 13:     prntf("Value of c: %f\n", c);
+Line 14:     for int i = 0; i < 5; i++) {
+Line 15:         printf("i = %d\n", i);
+Line 16:     }
+Line 17:     Line 18:     int result = multiply(a, b);
+Line 19:     printf("Result: %d\n", result);
+Line 20:     Line 21:     int multiply(int x, int y) {
+Line 22:         return x * y;
+Line 23:     }
+Line 24:     Line 25:     int arr[5 = {1, 2, 3, 4, 5};
+Line 26:     Line 27:     int *p = &a;
+Line 28:     printf("Value pointed by p: %d\n", *p);
+Line 29:     p + 1; Line 30:     Line 31:     char *str = malloc(50);
+Line 32:     strcpy(str, "Hello, World!");
+Line 33:     Line 34:     while (a < 20);
+Line 35:         printf("a is less than 20\n");
+Line 36:     Line 37:     int x, y;
+Line 38:     Line 39:     return 0;
+Line 40: int multiply(int x, int y) {
+Line 41:     return x * y;
+Line 42: }
+Line 43: Error: Mismatched brackets detected.
 Line 3: Found keyword 'int'
 Line 4: Found keyword 'int'
 Line 5: Found keyword 'int'
-Line 7: Found keyword 'int'
-Line 9: Found keyword 'if'
+Line 6: Found keyword 'int'
+Line 7: Found keyword 'if'
+Line 8: Found keyword 'int'
+Line 9: Found keyword 'else'
 Line 10: Found keyword 'int'
-Line 11: Found keyword 'else'
-Line 12: Found keyword 'int'
+Line 14: Found keyword 'int'
+Line 14: Found keyword 'for'
+Line 15: Found keyword 'int'
+Line 18: Found keyword 'int'
 Line 19: Found keyword 'int'
-Line 19: Found keyword 'for'
-Line 20: Found keyword 'int'
-Line 23: Found keyword 'int'
-Line 24: Found keyword 'int'
-Line 26: Found keyword 'int'
-Line 27: Found keyword 'return'
-Line 30: Found keyword 'int'
-Line 32: Found keyword 'int'
-Line 33: Found keyword 'int'
-Line 39: Found keyword 'while'
+Line 21: Found keyword 'int'
+Line 22: Found keyword 'return'
+Line 25: Found keyword 'int'
+Line 27: Found keyword 'int'
+Line 28: Found keyword 'int'
+Line 34: Found keyword 'while'
+Line 35: Found keyword 'int'
+Line 37: Found keyword 'int'
+Line 39: Found keyword 'return'
 Line 40: Found keyword 'int'
-Line 42: Found keyword 'int'
-Line 44: Found keyword 'return'
-Line 45: Found keyword 'int'
-Line 46: Found keyword 'return'
+Line 41: Found keyword 'return'
 Number of functions: 4
 Number of function prototypes: 11
-Line 7: Found keyword usage 'printf'
+Line 6: Found keyword usage 'printf'
+Line 8: Found keyword usage 'printf'
 Line 10: Found keyword usage 'printf'
-Line 12: Found keyword usage 'printf'
-Line 20: Found keyword usage 'printf'
-Line 24: Found keyword usage 'printf'
-Line 33: Found keyword usage 'printf'
-Line 40: Found keyword usage 'printf'
-Line 36: Found built-in function usage 'malloc'
-Line 37: Found built-in function usage 'strcpy'
-Line 7: Found print function.
+Line 15: Found keyword usage 'printf'
+Line 19: Found keyword usage 'printf'
+Line 28: Found keyword usage 'printf'
+Line 35: Found keyword usage 'printf'
+Line 31: Found built-in function 'malloc'
+Line 32: Found built-in function 'strcpy'
+Line 6: Found print function.
+Line 8: Found print function.
 Line 10: Found print function.
-Line 12: Found print function.
-Line 20: Found print function.
-Line 24: Found print function.
-Line 33: Found print function.
-Line 40: Found print function.
-Number of variables: 18
+Line 15: Found print function.
+Line 19: Found print function.
+Line 28: Found print function.
+Line 35: Found print function.
+Number of variables: 14
+Line 6: Missing semicolon.

@@ -3,25 +3,16 @@
 
 int main() {
     int a = 5;
-    int b = 10
-
-    // Missing semicolon
+    int b = 10;
     printf("This is a test program.\n")
-
-    // Unmatched brackets
     if (a > b {
         printf("a is greater than b\n");
     else {
         printf("a is less than or equal to b\n");
     }
-
-    // Incorrect variable declaration
     floot c = 3.14;
-
-    // Incorrect function call
     prntf("Value of c: %f\n", c);
 
-    // Incorrect loop syntax
     for int i = 0; i < 5; i++) {
         printf("i = %d\n", i);
     }
