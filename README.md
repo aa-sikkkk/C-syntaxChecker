@@ -2,7 +2,7 @@
 
 ## 📝 Overview
 
-C-SyntaxChecker is a tool designed to analyze C code for common syntax issues. It checks for bracket matching, keyword usage, function definitions, and more. This tool can help developers maintain clean and error-free code.
+C-SyntaxChecker is a tool designed to analyze C and C++ code for common syntax issues. It checks for bracket matching, keyword usage, function definitions, and more. This tool can help developers maintain clean and error-free code.
 
 ## 🌟 Features
 
@@ -11,6 +11,10 @@ C-SyntaxChecker is a tool designed to analyze C code for common syntax issues. I
 - **Function Counting:** Counts the number of functions and prototypes.
 - **Variable Counting:** Tracks declared variables.
 - **Print and Scan Functions Check:** Validates usage of print and scan functions.
+- **File Operations Check:** Identifies file operation functions like fopen and fclose.
+- **Semicolon Checking:** Detects missing semicolons in the code.
+- **C++ Constructs Check:** Checks for C++ specific constructs like classes and templates.
+- **C++ Specific Checks:** Checks for class and template usage in C++ files.
 
 ## 🎨 ASCII Art Banner
 
@@ -58,9 +62,8 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
 
    ```bash
    cd cSyn
-   chmod +x synCheck.sh
-   FOR WINDOWS: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-   ./synCheck.sh
+   gcc main.c -o synCheck
+   ./synCheck input_file.c
    ```
    
 ## 🚀 GUI
