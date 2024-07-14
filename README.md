@@ -64,6 +64,12 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
    cd cSyn
    gcc main.c -o synCheck
    ./synCheck input_file.c
+
+   to use shell script
+   cd cSyn
+   chmod +x synCheck.sh
+   FOR WINDOWS: Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+   ./synCheck.sh
    ```
    
 ## 🚀 GUI
