@@ -23,16 +23,14 @@ int is_print_function(char line[], int line_length);
 int is_scan_function(char line[], int line_length);
 void count_variables(FileLine lines[], int total_lines, FILE *output_file);
 void check_file_operations(FileLine lines[], int total_lines, FILE *output_file);
-int is_for_loop(char line[], int line_length);
-int is_while_loop(char line[], int line_length);
+int is_for_loop(char *line, int length);
+int is_while_loop(char *line, int length);
 int is_valid_function_syntax(char *line);
 int is_valid_variable_declaration(char *line);
 void check_semicolons(FileLine lines[], int total_lines, FILE *output_file);
 void check_cpp_specific_constructs(FileLine lines[], int total_lines, FILE *output_file);
 void check_class_usage(FileLine lines[], int total_lines, FILE *output_file);
 void check_templates(FileLine lines[], int total_lines, FILE *output_file);
-int is_for_loop(char *line, int length);
-int is_while_loop(char *line, int length);
 
 int main(int argc, char *argv[]) {
     if (argc < 2) {
@@ -44,8 +42,8 @@ int main(int argc, char *argv[]) {
     FILE *input_file;
     FILE *output_file;
     FileLine lines[100];
-    char buffer[100];
-    int total_lines, i = 0, line_length, comment_position;
+    char buffer[1024];
+    int total_lines = 0, line_length, comment_position;
     int is_cpp = 0;
 
     // Determine file type based on extension
@@ -70,27 +68,24 @@ int main(int argc, char *argv[]) {
     }
 
     // Read lines from the input file
-    while (fgets(buffer, 100, input_file) != NULL) {
+    while (fgets(buffer, sizeof(buffer), input_file) != NULL) {
         line_length = strlen(buffer); // Get the length of the line
         comment_position = find_comment_position(buffer, line_length); // Find position of comment if exists
 
-        // If the line is not empty and does not contain a comment
+        // Process the line based on the presence of comments
         if (buffer[0] != '\n' && comment_position == -1) {
-            lines[i].line_number = i + 1;
-            lines[i].line_length = line_length;
-            strcpy(lines[i].line_text, buffer);
-            i++;
+            lines[total_lines].line_number = total_lines + 1;
+            lines[total_lines].line_length = line_length;
+            strcpy(lines[total_lines].line_text, buffer);
+            total_lines++;
         } else if (buffer[0] != '\n' && comment_position != -1) {
-            lines[i].line_number = i + 1;
-            for (int j = 0; j < comment_position; j++) {
-                lines[i].line_text[j] = buffer[j];
-            }
-            lines[i].line_text[comment_position] = '\0';
-            lines[i].line_length = comment_position;
-            i++;
+            lines[total_lines].line_number = total_lines + 1;
+            strncpy(lines[total_lines].line_text, buffer, comment_position);
+            lines[total_lines].line_text[comment_position] = '\0';
+            lines[total_lines].line_length = comment_position;
+            total_lines++;
         }
     }
-    total_lines = i;
 
     fclose(input_file);
 
@@ -210,58 +205,68 @@ void check_keyword_usage(FileLine lines[], int total_lines, FILE *output_file, i
     }
 }
 
-// Function to check the usage of built-in functions
+// Function to check for the usage of built-in functions
 void check_builtin_functions(FileLine lines[], int total_lines, FILE *output_file, int is_cpp) {
-    const char *functions_c[] = {"malloc", "free", "strcpy", "strlen", "strcmp"};
-    const char *functions_cpp[] = {"std::string", "std::vector", "std::map", "std::set"};
-    int function_count_c = sizeof(functions_c) / sizeof(functions_c[0]);
-    int function_count_cpp = sizeof(functions_cpp) / sizeof(functions_cpp[0]);
+    const char *builtin_functions_c[] = {"malloc", "calloc", "free", "exit", "qsort", "bsearch"};
+    const char *builtin_functions_cpp[] = {"new", "delete"};
+    int function_count_c = sizeof(builtin_functions_c) / sizeof(builtin_functions_c[0]);
+    int function_count_cpp = sizeof(builtin_functions_cpp) / sizeof(builtin_functions_cpp[0]);
 
     for (int i = 0; i < total_lines; i++) {
         for (int j = 0; j < function_count_c; j++) {
-            if (strstr(lines[i].line_text, functions_c[j])) {
-                fprintf(output_file, "Line %d: Found built-in function '%s'\n", lines[i].line_number, functions_c[j]);
+            if (strstr(lines[i].line_text, builtin_functions_c[j])) {
+                fprintf(output_file, "Line %d: Found built-in function usage '%s'\n", lines[i].line_number, builtin_functions_c[j]);
             }
         }
         if (is_cpp) {
             for (int j = 0; j < function_count_cpp; j++) {
-                if (strstr(lines[i].line_text, functions_cpp[j])) {
-                    fprintf(output_file, "Line %d: Found built-in function '%s'\n", lines[i].line_number, functions_cpp[j]);
+                if (strstr(lines[i].line_text, builtin_functions_cpp[j])) {
+                    fprintf(output_file, "Line %d: Found built-in function usage '%s'\n", lines[i].line_number, builtin_functions_cpp[j]);
                 }
             }
         }
     }
 }
 
-// Function to check the usage of printf and scanf functions
+// Function to check for print and scan functions
 void check_print_scan_functions(FileLine lines[], int total_lines, FILE *output_file) {
     for (int i = 0; i < total_lines; i++) {
         if (is_print_function(lines[i].line_text, lines[i].line_length)) {
-            fprintf(output_file, "Line %d: Found print function.\n", lines[i].line_number);
+            fprintf(output_file, "Line %d: Found print function usage\n", lines[i].line_number);
         }
         if (is_scan_function(lines[i].line_text, lines[i].line_length)) {
-            fprintf(output_file, "Line %d: Found scan function.\n", lines[i].line_number);
+            fprintf(output_file, "Line %d: Found scan function usage\n", lines[i].line_number);
         }
     }
 }
 
 // Function to check if a line contains a print function
 int is_print_function(char line[], int line_length) {
-    if (strstr(line, "printf") || strstr(line, "cout")) {
-        return 1;
+    const char *print_functions[] = {"printf", "puts", "putchar", "cout"};
+    int function_count = sizeof(print_functions) / sizeof(print_functions[0]);
+
+    for (int i = 0; i < function_count; i++) {
+        if (strstr(line, print_functions[i])) {
+            return 1;
+        }
     }
     return 0;
 }
 
 // Function to check if a line contains a scan function
 int is_scan_function(char line[], int line_length) {
-    if (strstr(line, "scanf") || strstr(line, "cin")) {
-        return 1;
+    const char *scan_functions[] = {"scanf", "gets", "getchar", "cin"};
+    int function_count = sizeof(scan_functions) / sizeof(scan_functions[0]);
+
+    for (int i = 0; i < function_count; i++) {
+        if (strstr(line, scan_functions[i])) {
+            return 1;
+        }
     }
     return 0;
 }
 
-// Function to count variables
+// Function to count variables in the code
 void count_variables(FileLine lines[], int total_lines, FILE *output_file) {
     int variable_count = 0;
     for (int i = 0; i < total_lines; i++) {
@@ -272,110 +277,90 @@ void count_variables(FileLine lines[], int total_lines, FILE *output_file) {
     fprintf(output_file, "Number of variables: %d\n", variable_count);
 }
 
-// Function to check the usage of file operations
+// Function to check for file operations
 void check_file_operations(FileLine lines[], int total_lines, FILE *output_file) {
+    const char *file_functions[] = {"fopen", "fclose", "fread", "fwrite", "fprintf", "fscanf"};
+    int function_count = sizeof(file_functions) / sizeof(file_functions[0]);
+
     for (int i = 0; i < total_lines; i++) {
-        if (strstr(lines[i].line_text, "fopen") || strstr(lines[i].line_text, "fclose")) {
-            fprintf(output_file, "Line %d: Found file operation function.\n", lines[i].line_number);
-        }
-    }
-}
-
-int is_for_loop(char *line, int length) {
-    return strstr(line, "for") != NULL && strchr(line, '(') != NULL && strchr(line, ')') != NULL;
-}
-
-int is_while_loop(char *line, int length) {
-    return strstr(line, "while") != NULL && strchr(line, '(') != NULL && strchr(line, ')') != NULL;
-}
-
-// Function to check if a line contains a valid function syntax
-int is_valid_function_syntax(char *line) {
-    if (strchr(line, '(') && strchr(line, ')')) {
-        return 1;
-    }
-    return 0;
-}
-
-// Function to check if a line contains a valid variable declaration
-int is_valid_variable_declaration(char *line) {
-    const char *types[] = {"int", "float", "char", "double", "long", "short", "unsigned", "signed"};
-    int type_count = sizeof(types) / sizeof(types[0]);
-
-    for (int i = 0; i < type_count; i++) {
-        if (strstr(line, types[i])) {
-            if (strchr(line, ';')) {
-                return 1;
+        for (int j = 0; j < function_count; j++) {
+            if (strstr(lines[i].line_text, file_functions[j])) {
+                fprintf(output_file, "Line %d: Found file operation '%s'\n", lines[i].line_number, file_functions[j]);
             }
         }
     }
-    return 0;
 }
 
-// Function to check for missing semicolons
+// Function to trim leading and trailing whitespace from a string
+void trim_whitespace(char *str) {
+    char *end;
+
+    // Trim leading space
+    while (isspace((unsigned char) *str)) str++;
+
+    // All spaces?
+    if (*str == 0) return;
+
+    // Trim trailing space
+    end = str + strlen(str) - 1;
+    while (end > str && isspace((unsigned char) *end)) end--;
+
+    // Write new null terminator
+    *(end + 1) = 0;
+}
+
+int is_comment_line(const char *line) {
+    return strstr(line, "//") == line || strstr(line, "/*") == line;
+}
+
+int is_multiline_comment_start(const char *line) {
+    return strstr(line, "/*") != NULL;
+}
+
+int is_multiline_comment_end(const char *line) {
+    return strstr(line, "*/") != NULL;
+}
+
+// Function to check for semicolons at the end of lines
 void check_semicolons(FileLine lines[], int total_lines, FILE *output_file) {
     int in_multiline_comment = 0;
 
     for (int i = 0; i < total_lines; i++) {
-        char *line = lines[i].line_text;
-        int line_length = strlen(line);
+        trim_whitespace(lines[i].line_text);
 
-        // Skip empty lines and header files
-        if (line_length == 0 || strstr(line, "#include")) {
-            continue;
+        if (strlen(lines[i].line_text) == 0) {
+            continue; // Skip empty lines
         }
 
-        // Handle single-line comments
-        char *single_comment = strstr(line, "//");
-        if (single_comment) {
-            *single_comment = '\0';
-            line_length = single_comment - line;
+        if (is_comment_line(lines[i].line_text)) {
+            continue; // Skip single-line comments
         }
 
-        // Handle multi-line comments
-        char *block_comment_start = strstr(line, "/*");
-        if (block_comment_start) {
-            in_multiline_comment = 1;
-            *block_comment_start = '\0';
-            line_length = block_comment_start - line;
+        if (is_multiline_comment_start(lines[i].line_text)) {
+            in_multiline_comment = 1; // Entering a multiline comment
         }
 
-        // Check for end of multi-line comments
         if (in_multiline_comment) {
-            if (strstr(line, "*/")) {
-                in_multiline_comment = 0;
-                char *block_comment_end = strstr(line, "*/");
-                line_length = block_comment_end - line + 2;
-            } else {
-                continue; // Skip this line
+            if (is_multiline_comment_end(lines[i].line_text)) {
+                in_multiline_comment = 0; // Exiting a multiline comment
             }
+            continue; // Skip the content of multiline comments
         }
 
-        // Trim whitespace
-        while (line_length > 0 && isspace(line[line_length - 1])) {
-            line[line_length - 1] = '\0';
-            line_length--;
-        }
-
-        // Check for missing semicolon
-        if (line_length > 0) {
-            char last_char = line[line_length - 1];
-
-            // Ignore lines that end with ;, {, or }
-            if (last_char != ';' && last_char != '{' && last_char != '}') {
-                // Check if it is a line that requires a semicolon
-                if (!is_for_loop(line, line_length) && !is_while_loop(line, line_length) &&
-                    !strstr(line, "if") && !strstr(line, "return") &&
-                    !strstr(line, "switch") && !strstr(line, "case")) {
-                    fprintf(output_file, "Line %d: Missing semicolon.\n", lines[i].line_number);
-                }
-            }
+        int len = strlen(lines[i].line_text);
+        if (lines[i].line_text[len - 1] != ';' &&
+            strstr(lines[i].line_text, "if") == NULL &&
+            strstr(lines[i].line_text, "for") == NULL &&
+            strstr(lines[i].line_text, "while") == NULL &&
+            strstr(lines[i].line_text, "switch") == NULL &&
+            strstr(lines[i].line_text, "else") == NULL &&
+            strstr(lines[i].line_text, "{") == NULL &&
+            strstr(lines[i].line_text, "}") == NULL &&
+            lines[i].line_text[len - 1] != '}') {
+            fprintf(output_file, "Line %d: Missing semicolon at the end\n", lines[i].line_number);
         }
     }
 }
-
-
-
 
 // Function to check for C++ specific constructs
 void check_cpp_specific_constructs(FileLine lines[], int total_lines, FILE *output_file) {
@@ -383,20 +368,48 @@ void check_cpp_specific_constructs(FileLine lines[], int total_lines, FILE *outp
     check_templates(lines, total_lines, output_file);
 }
 
-// Function to check for class usage in C++
+// Function to check for class usage
 void check_class_usage(FileLine lines[], int total_lines, FILE *output_file) {
     for (int i = 0; i < total_lines; i++) {
         if (strstr(lines[i].line_text, "class")) {
-            fprintf(output_file, "Line %d: Found class definition.\n", lines[i].line_number);
+            fprintf(output_file, "Line %d: Found class declaration\n", lines[i].line_number);
         }
     }
 }
 
-// Function to check for template usage in C++
+// Function to check for templates
 void check_templates(FileLine lines[], int total_lines, FILE *output_file) {
     for (int i = 0; i < total_lines; i++) {
-        if (strstr(lines[i].line_text, "template")) {
-            fprintf(output_file, "Line %d: Found template definition.\n", lines[i].line_number);
+        if (strstr(lines[i].line_text, "template") && strstr(lines[i].line_text, "<")) {
+            fprintf(output_file, "Line %d: Found template declaration\n", lines[i].line_number);
         }
     }
+}
+
+// Function to check if a line contains a for loop
+int is_for_loop(char *line, int length) {
+    return strstr(line, "for") != NULL;
+}
+
+// Function to check if a line contains a while loop
+int is_while_loop(char *line, int length) {
+    return strstr(line, "while") != NULL;
+}
+
+// Function to check if a line contains valid function syntax
+int is_valid_function_syntax(char *line) {
+    return strchr(line, '(') != NULL && strchr(line, ')') != NULL;
+}
+
+// Function to check if a line contains a valid variable declaration
+int is_valid_variable_declaration(char *line) {
+    const char *types[] = {"int", "float", "char", "double", "short", "long"};
+    int type_count = sizeof(types) / sizeof(types[0]);
+
+    for (int i = 0; i < type_count; i++) {
+        if (strstr(line, types[i])) {
+            return 1;
+        }
+    }
+    return 0;
 }

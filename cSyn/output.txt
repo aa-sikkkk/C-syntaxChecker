@@ -65,14 +65,23 @@ Line 15: Found keyword usage 'printf'
 Line 19: Found keyword usage 'printf'
 Line 28: Found keyword usage 'printf'
 Line 35: Found keyword usage 'printf'
-Line 31: Found built-in function 'malloc'
-Line 32: Found built-in function 'strcpy'
-Line 6: Found print function.
-Line 8: Found print function.
-Line 10: Found print function.
-Line 15: Found print function.
-Line 19: Found print function.
-Line 28: Found print function.
-Line 35: Found print function.
-Number of variables: 14
-Line 6: Missing semicolon.
+Line 31: Found built-in function usage 'malloc'
+Line 6: Found print function usage
+Line 8: Found print function usage
+Line 10: Found print function usage
+Line 15: Found print function usage
+Line 19: Found print function usage
+Line 28: Found print function usage
+Line 35: Found print function usage
+Number of variables: 18
+Line 1: Missing semicolon at the end
+Line 2: Missing semicolon at the end
+Line 6: Missing semicolon at the end
+Line 17: Missing semicolon at the end
+Line 20: Missing semicolon at the end
+Line 24: Missing semicolon at the end
+Line 26: Missing semicolon at the end
+Line 30: Missing semicolon at the end
+Line 33: Missing semicolon at the end
+Line 36: Missing semicolon at the end
+Line 38: Missing semicolon at the end
