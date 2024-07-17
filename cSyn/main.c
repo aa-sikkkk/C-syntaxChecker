@@ -1,3 +1,11 @@
+// Author: Aas1kkk
+// Date: 2024-07-13
+// Description: A a tool designed to analyze and validate the syntax of C and C++ codebases. It ensures code quality by detecting common syntax errors and providing detailed reports.
+// File version: 1.1
+// Last Update: 2024-07-17
+// License: GNU License
+// Recent changes: Added support for C++ specific constructs and improved the output format.
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
