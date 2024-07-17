@@ -1,4 +1,12 @@
-# 🎉 C-SyntaxChecker 🎉
+<p align="center">
+ <img height="350" width="350" src="https://github.com/user-attachments/assets/960a6c4d-97bc-404e-9089-92539b92a2c9"
+</p>
+<p align="center">
+  <a href="https://github.com/aa-sikkkk/C-syntaxChecker/stargazers"><img src="https://img.shields.io/github/stars/aa-sikkkk/C-syntaxChecker?style=social" alt="Stars"></a>
+  <a href="https://github.com/aa-sikkkk/C-syntaxChecker/issues"><img src="https://img.shields.io/github/issues/aa-sikkkk/C-syntaxChecker" alt="Issues"></a>
+  <img src="https://img.shields.io/github/license/aa-sikkkk/C-syntaxChecker" alt="License">
+</p>
+
 
 ## 📝 Overview
 
