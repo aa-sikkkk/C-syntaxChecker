@@ -2,7 +2,7 @@
 
 ## 📝 Overview
 
-C-SyntaxChecker is a tool designed to analyze C and C++ code for common syntax issues. It checks for bracket matching, keyword usage, function definitions, and more. This tool can help developers maintain clean and error-free code.
+C-SyntaxChecker is a  tool designed to analyze and validate the syntax of C and C++ codebases. It ensures code quality by detecting common syntax errors and providing detailed reports.
 
 ## 🌟 Features
 
