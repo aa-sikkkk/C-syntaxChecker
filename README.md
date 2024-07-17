@@ -15,6 +15,7 @@ C-SyntaxChecker is a  tool designed to analyze and validate the syntax of C and 
 - **Semicolon Checking:** Detects missing semicolons in the code.
 - **C++ Constructs Check:** Checks for C++ specific constructs like classes and templates.
 - **C++ Specific Checks:** Checks for class and template usage in C++ files.
+- **Graphical User-interface:** Simple and straightforward CLI and GUI interfaces for seamless integration into your workflow.
 
 ## 🎨 ASCII Art Banner
 
