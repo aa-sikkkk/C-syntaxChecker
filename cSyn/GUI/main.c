@@ -4,11 +4,13 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAX_LINE_LENGTH 1024
+
 // Structure to store each line of the file along with its line number and length
 typedef struct {
     int line_number;
     int line_length;
-    char line_text[100];
+    char line_text[MAX_LINE_LENGTH];
 } FileLine;
 
 // Function declarations
@@ -23,13 +25,6 @@ void check_print_scan_functions(FileLine lines[], int total_lines, FILE *output_
 int is_print_function(char line[], int line_length);
 int is_scan_function(char line[], int line_length);
 void count_variables(FileLine lines[], int total_lines, FILE *output_file);
-int is_gets_function(char line[], int line_length);
-int is_puts_function(char line[], int line_length);
-int is_fprintf_function(char line[], int line_length);
-int is_fscanf_function(char line[], int line_length);
-void check_file_operations(FileLine lines[], int total_lines, FILE *output_file);
-int is_for_loop(char line[], int line_length);
-int is_while_loop(char line[], int line_length);
 int is_valid_function_syntax(char *line);
 int is_valid_variable_declaration(char *line);
 
@@ -45,8 +40,8 @@ void on_analyze_clicked(GtkWidget *widget, gpointer data) {
 
     FILE *input_file;
     FILE *output_file;
-    FileLine lines[100];
-    char buffer[100];
+    FileLine lines[1000];
+    char buffer[MAX_LINE_LENGTH];
     int total_lines = 0, i = 0, line_length, comment_position;
 
     input_file = fopen(input_file_path, "r");
@@ -63,7 +58,7 @@ void on_analyze_clicked(GtkWidget *widget, gpointer data) {
     }
 
     // Read lines from the input file
-    while (fgets(buffer, 100, input_file) != NULL) {
+    while (fgets(buffer, MAX_LINE_LENGTH, input_file) != NULL) {
         line_length = strlen(buffer); // Get the length of the line
         comment_position = find_comment_position(buffer, line_length); // Find position of comment if exists
 
@@ -96,7 +91,6 @@ void on_analyze_clicked(GtkWidget *widget, gpointer data) {
     check_builtin_functions(lines, total_lines, output_file);
     check_print_scan_functions(lines, total_lines, output_file);
     count_variables(lines, total_lines, output_file);
-    check_file_operations(lines, total_lines, output_file);
 
     fclose(output_file);
 
@@ -203,17 +197,17 @@ void check_print_scan_functions(FileLine lines[], int total_lines, FILE *output_
     }
 }
 
-// Function to check if a line is a print function
+// Function to check if a line contains a print function
 int is_print_function(char line[], int line_length) {
     return strstr(line, "printf") != NULL || strstr(line, "fprintf") != NULL || strstr(line, "puts") != NULL;
 }
 
-// Function to check if a line is a scan function
+// Function to check if a line contains a scan function
 int is_scan_function(char line[], int line_length) {
     return strstr(line, "scanf") != NULL || strstr(line, "fscanf") != NULL || strstr(line, "gets") != NULL;
 }
 
-// Function to count variable declarations
+// Function to count variables
 void count_variables(FileLine lines[], int total_lines, FILE *output_file) {
     int variable_count = 0;
     for (int i = 0; i < total_lines; i++) {
@@ -224,59 +218,19 @@ void count_variables(FileLine lines[], int total_lines, FILE *output_file) {
     fprintf(output_file, "Number of variables: %d\n", variable_count);
 }
 
-// Function to check if a line contains the gets function
-int is_gets_function(char line[], int line_length) {
-    return strstr(line, "gets") != NULL;
-}
-
-// Function to check if a line contains the puts function
-int is_puts_function(char line[], int line_length) {
-    return strstr(line, "puts") != NULL;
-}
-
-// Function to check if a line contains the fprintf function
-int is_fprintf_function(char line[], int line_length) {
-    return strstr(line, "fprintf") != NULL;
-}
-
-// Function to check if a line contains the fscanf function
-int is_fscanf_function(char line[], int line_length) {
-    return strstr(line, "fscanf") != NULL;
-}
-
-// Function to check for file operations
-void check_file_operations(FileLine lines[], int total_lines, FILE *output_file) {
-    for (int i = 0; i < total_lines; i++) {
-        if (is_fprintf_function(lines[i].line_text, lines[i].line_length)) {
-            fprintf(output_file, "Line %d: Found fprintf function.\n", lines[i].line_number);
-        }
-        if (is_fscanf_function(lines[i].line_text, lines[i].line_length)) {
-            fprintf(output_file, "Line %d: Found fscanf function.\n", lines[i].line_number);
-        }
-    }
-}
-
-// Function to check if a line contains a for loop
-int is_for_loop(char line[], int line_length) {
-    return strstr(line, "for") != NULL;
-}
-
-// Function to check if a line contains a while loop
-int is_while_loop(char line[], int line_length) {
-    return strstr(line, "while") != NULL;
-}
-
-// Function to check for valid function syntax
+// Function to check if a line has valid function syntax
 int is_valid_function_syntax(char *line) {
-    return strchr(line, '(') != NULL && strchr(line, ')') != NULL && strchr(line, '{') != NULL;
+    char *paren_open = strchr(line, '(');
+    char *paren_close = strchr(line, ')');
+    return paren_open && paren_close && (paren_close > paren_open);
 }
 
-// Function to check for valid variable declaration syntax
+// Function to check if a line is a valid variable declaration
 int is_valid_variable_declaration(char *line) {
-    const char *types[] = {"int", "float", "char", "double", "long", "short"};
-    int type_count = sizeof(types) / sizeof(types[0]);
+    const char *valid_types[] = {"int", "float", "char", "double"};
+    int type_count = sizeof(valid_types) / sizeof(valid_types[0]);
     for (int i = 0; i < type_count; i++) {
-        if (strstr(line, types[i]) != NULL) {
+        if (strstr(line, valid_types[i]) == line) {
             return 1;
         }
     }
@@ -288,65 +242,64 @@ void on_quit_clicked(GtkWidget *widget, gpointer data) {
     gtk_main_quit();
 }
 
-// Main function
+// Main function to initialize the GTK application
 int main(int argc, char *argv[]) {
     GtkWidget *window;
     GtkWidget *grid;
-    GtkWidget *input_file_label, *output_file_label;
-    GtkWidget *analyze_button, *quit_button;
+    GtkWidget *label_input;
+    GtkWidget *label_output;
+    GtkWidget *analyze_button;
+    GtkWidget *quit_button;
     GtkWidget *scroll_window;
 
     gtk_init(&argc, &argv);
 
-    // Create the main window
+    // Create main window
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_title(GTK_WINDOW(window), "C Code Analyzer");
-    gtk_window_set_default_size(GTK_WINDOW(window), 600, 400);
+    gtk_window_set_title(GTK_WINDOW(window), "C/C++ Syntax Checker");
+    gtk_container_set_border_width(GTK_CONTAINER(window), 10);
+    gtk_window_set_default_size(GTK_WINDOW(window), 800, 600);
 
-    // Create a grid to arrange widgets
+    // Create grid and attach it to the window
     grid = gtk_grid_new();
     gtk_container_add(GTK_CONTAINER(window), grid);
 
-    // Create and add input file entry
-    input_file_label = gtk_label_new("Input File:");
-    gtk_grid_attach(GTK_GRID(grid), input_file_label, 0, 0, 1, 1);
+    // Create and attach widgets to the grid
+    label_input = gtk_label_new("Input File:");
+    gtk_grid_attach(GTK_GRID(grid), label_input, 0, 0, 1, 1);
     input_file_entry = gtk_entry_new();
-    gtk_grid_attach(GTK_GRID(grid), input_file_entry, 1, 0, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), input_file_entry, 1, 0, 1, 1);
 
-    // Create and add output file entry
-    output_file_label = gtk_label_new("Output File:");
-    gtk_grid_attach(GTK_GRID(grid), output_file_label, 0, 1, 1, 1);
+    label_output = gtk_label_new("Output File:");
+    gtk_grid_attach(GTK_GRID(grid), label_output, 0, 1, 1, 1);
     output_file_entry = gtk_entry_new();
-    gtk_grid_attach(GTK_GRID(grid), output_file_entry, 1, 1, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid), output_file_entry, 1, 1, 1, 1);
 
-    // Create and add analyze button
     analyze_button = gtk_button_new_with_label("Analyze");
-    gtk_grid_attach(GTK_GRID(grid), analyze_button, 0, 2, 1, 1);
     g_signal_connect(analyze_button, "clicked", G_CALLBACK(on_analyze_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(grid), analyze_button, 0, 2, 1, 1);
 
-    // Create and add quit button
     quit_button = gtk_button_new_with_label("Quit");
-    gtk_grid_attach(GTK_GRID(grid), quit_button, 1, 2, 1, 1);
     g_signal_connect(quit_button, "clicked", G_CALLBACK(on_quit_clicked), NULL);
+    gtk_grid_attach(GTK_GRID(grid), quit_button, 1, 2, 1, 1);
 
-    // Create and add text view for displaying messages
+    scroll_window = gtk_scrolled_window_new(NULL, NULL);
+    gtk_widget_set_size_request(scroll_window, 600, 400);
+    gtk_grid_attach(GTK_GRID(grid), scroll_window, 0, 3, 2, 1);
+
     text_view = gtk_text_view_new();
     gtk_text_view_set_editable(GTK_TEXT_VIEW(text_view), FALSE);
-    gtk_text_view_set_wrap_mode(GTK_TEXT_VIEW(text_view), GTK_WRAP_WORD);
-
-    // Create a scroll window and add the text view
-    scroll_window = gtk_scrolled_window_new(NULL, NULL);
     gtk_container_add(GTK_CONTAINER(scroll_window), text_view);
-    gtk_grid_attach(GTK_GRID(grid), scroll_window, 0, 3, 3, 1);
 
-    // Connect the window close event to the quit function
-    g_signal_connect(window, "destroy", G_CALLBACK(on_quit_clicked), NULL);
+    // Connect the destroy signal to quit the GTK main loop
+    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
-    // Show all widgets
+    // Show all widgets and enter the GTK main loop
     gtk_widget_show_all(window);
-
-    // Run the GTK main loop
     gtk_main();
 
     return 0;
 }
+
+
+// gcc -o analyzer main.c $(pkg-config --cflags --libs gtk+-3.0)

@@ -3,14 +3,24 @@
         {
             "name": "Win32",
             "includePath": [
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "C:/msys64/mingw64/include/gtk-3.0",
+                "C:/msys64/mingw64/include/glib-2.0",
+                "C:/msys64/mingw64/lib/glib-2.0/include",
+                "C:/msys64/mingw64/bin",
+                "C:/msys64/mingw64/include/pango-1.0",
+                "C:/msys64/mingw64/include/cairo",
+                "C:/msys64/mingw64/include/gdk-pixbuf-2.0",
+                "C:/msys64/mingw64/include/atk-1.0",
+                "C:/msys64/mingw64/include/harfbuzz",
+                "C:/msys64/mingw64/**"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-            "compilerPath": "C:\\gcc\\bin\\gcc.exe",
+            "compilerPath": "C:/gcc/bin/gcc.exe",
             "cStandard": "c17",
             "cppStandard": "gnu++17",
             "intelliSenseMode": "windows-gcc-x64"
