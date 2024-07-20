@@ -43,29 +43,49 @@ void analyze_file(const char *input_filename, FILE *output_file);
 int calculate_cyclomatic_complexity(FileLine lines[], int total_lines);
 
 // Function to process a single file
+// Function to process a single file
 void analyze_file(const char *input_filename, FILE *output_file) {
     FILE *input_file;
-    FileLine lines[100];
+    FileLine *lines = NULL;
     char buffer[1024];
     int total_lines = 0, line_length, comment_position;
     int is_cpp = 0;
+    int capacity = 100;  // Initial capacity
+
+    lines = (FileLine *)malloc(capacity * sizeof(FileLine));
+    if (lines == NULL) {
+        fprintf(output_file, "Error: Memory allocation failed.\n");
+        return;
+    }
 
     // Determine file type based on extension
     if (strstr(input_filename, ".cpp") != NULL) {
         is_cpp = 1;
     } else if (strstr(input_filename, ".c") == NULL) {
         fprintf(output_file, "Error: Unsupported file extension for file %s. Please use .c or .cpp files.\n", input_filename);
+        free(lines);
         return;
     }
 
     input_file = fopen(input_filename, "r");
     if (input_file == NULL) {
         fprintf(output_file, "Error: Could not open input file %s.\n", input_filename);
+        free(lines);
         return;
     }
 
     // Read lines from the input file
     while (fgets(buffer, sizeof(buffer), input_file) != NULL) {
+        if (total_lines >= capacity) {
+            capacity *= 2;
+            lines = (FileLine *)realloc(lines, capacity * sizeof(FileLine));
+            if (lines == NULL) {
+                fprintf(output_file, "Error: Memory reallocation failed.\n");
+                fclose(input_file);
+                return;
+            }
+        }
+
         line_length = strlen(buffer); // Get the length of the line
         comment_position = find_comment_position(buffer, line_length); // Find position of comment if exists
 
@@ -107,6 +127,9 @@ void analyze_file(const char *input_filename, FILE *output_file) {
     fprintf(output_file, "Cyclomatic Complexity: %d\n", cyclomatic_complexity);
 
     fprintf(output_file, "\n");
+
+    // Free allocated memory
+    free(lines);
 }
 
 int main(int argc, char *argv[]) {

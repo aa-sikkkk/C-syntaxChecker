@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Code Analysis Report</title>
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans leading-normal tracking-normal">
+<div class="container mx-auto p-4">
+<h1 class="text-3xl font-bold mb-4">Code Analysis Report</h1>
+<div class="p-4 bg-white shadow-md rounded-md mb-4">
+<h2 class="text-2xl font-bold mb-2">Analysis for file: input_file.c</h2>
+<pre class="bg-gray-200 p-2 rounded-md mb-4">
+Line 1: #include <stdio.h>
+Line 2: #include <stdlib.h>
+Line 3: int main() {
+Line 4:     int a = 5;
+Line 5:     int b = 10;
+Line 6:     printf("This is a test program.\n")
+Line 7:     if (a > b {
+Line 8:         printf("a is greater than b\n");
+Line 9:     else {
+Line 10:         printf("a is less than or equal to b\n");
+Line 11:     }
+Line 12:     floot c = 3.14;
+Line 13:     prntf("Value of c: %f\n", c);
+Line 14:     for int i = 0; i < 5; i++) {
+Line 15:         printf("i = %d\n", i);
+Line 16:     }
+Line 17:     Line 18:     int result = multiply(a, b);
+Line 19:     printf("Result: %d\n", result);
+Line 20:     Line 21:     int multiply(int x, int y) {
+Line 22:         return x * y;
+Line 23:     }
+Line 24:     Line 25:     int arr[5 = {1, 2, 3, 4, 5};
+Line 26:     Line 27:     int *p = &a;
+Line 28:     printf("Value pointed by p: %d\n", *p);
+Line 29:     p + 1; Line 30:     Line 31:     char *str = malloc(50);
+Line 32:     strcpy(str, "Hello, World!");
+Line 33:     Line 34:     while (a < 20);
+Line 35:         printf("a is less than 20\n");
+Line 36:     Line 37:     int x, y;
+Line 38:     Line 39:     return 0;
+Line 40: int multiply(int x, int y) {
+Line 41:     return x * y;
+Line 42: }
+Line 43: </pre>
+<p class="text-red-500">Line 7: Mismatched opening bracket.</p>
+<p class="text-red-500">Line 3: Mismatched opening bracket.</p>
+<p class="text-yellow-500">Line 3: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 4: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 5: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 6: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 7: Keyword 'if' detected.</p>
+<p class="text-yellow-500">Line 8: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 9: Keyword 'else' detected.</p>
+<p class="text-yellow-500">Line 10: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 14: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 14: Keyword 'for' detected.</p>
+<p class="text-yellow-500">Line 15: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 18: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 19: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 21: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 25: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 27: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 28: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 31: Keyword 'char' detected.</p>
+<p class="text-yellow-500">Line 34: Keyword 'while' detected.</p>
+<p class="text-yellow-500">Line 35: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 37: Keyword 'int' detected.</p>
+<p class="text-yellow-500">Line 40: Keyword 'int' detected.</p>
+<p class="text-blue-500">Number of functions: 3</p>
+<p class="text-blue-500">Number of function prototypes: 0</p>
+<p class="text-purple-500">Line 6: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 8: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 10: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 15: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 19: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 28: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 35: Built-in function usage 'printf' detected.</p>
+<p class="text-purple-500">Line 6: Print function detected.</p>
+<p class="text-purple-500">Line 8: Print function detected.</p>
+<p class="text-purple-500">Line 10: Print function detected.</p>
+<p class="text-purple-500">Line 15: Print function detected.</p>
+<p class="text-purple-500">Line 19: Print function detected.</p>
+<p class="text-purple-500">Line 28: Print function detected.</p>
+<p class="text-purple-500">Line 35: Print function detected.</p>
+<p class="text-blue-500">Number of variables declared: 14</p>
+<p class="text-red-500">Line 1: Missing semicolon.</p>
+<p class="text-red-500">Line 2: Missing semicolon.</p>
+<p class="text-red-500">Line 3: Missing semicolon.</p>
+<p class="text-red-500">Line 6: Missing semicolon.</p>
+<p class="text-red-500">Line 7: Missing semicolon.</p>
+<p class="text-red-500">Line 9: Missing semicolon.</p>
+<p class="text-red-500">Line 11: Missing semicolon.</p>
+<p class="text-red-500">Line 14: Missing semicolon.</p>
+<p class="text-red-500">Line 16: Missing semicolon.</p>
+<p class="text-red-500">Line 17: Missing semicolon.</p>
+<p class="text-red-500">Line 20: Missing semicolon.</p>
+<p class="text-red-500">Line 21: Missing semicolon.</p>
+<p class="text-red-500">Line 23: Missing semicolon.</p>
+<p class="text-red-500">Line 24: Missing semicolon.</p>
+<p class="text-red-500">Line 26: Missing semicolon.</p>
+<p class="text-red-500">Line 30: Missing semicolon.</p>
+<p class="text-red-500">Line 33: Missing semicolon.</p>
+<p class="text-red-500">Line 36: Missing semicolon.</p>
+<p class="text-red-500">Line 38: Missing semicolon.</p>
+<p class="text-red-500">Line 40: Missing semicolon.</p>
+<p class="text-red-500">Line 42: Missing semicolon.</p>
+<p class="mt-4">Cyclomatic Complexity: <span class="font-bold">3</span></p>
+</div>
+</div>
+</body>
+</html>
