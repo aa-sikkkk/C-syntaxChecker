@@ -12,6 +12,9 @@
 
 C-SyntaxChecker is a  tool designed to analyze and validate the syntax of C and C++ codebases. It ensures code quality by detecting common syntax errors and providing detailed reports.
 
+![Code-Analysis-Report-05-20-2025_05_20_PM](https://github.com/user-attachments/assets/9ac7e70e-dd50-4527-abdc-a6af689bac52)
+
+
 ## 🌟 Features
 
 - **Bracket Checking:** Validates that all opening and closing brackets match.
@@ -56,12 +59,6 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
   _|_|_|  _|    _|    _|_|_|    _|_|_|  _|    _|    _|_|_|  _|        
 ```
 
-
-
-
-## [📖 Documentations](https://github.com/aa-sikkkk/C-syntaxChecker/wiki)
-
-cSynCheck's documentations are hosted on this repository's [Wiki page](https://github.com/aa-sikkkk/C-syntaxChecker/wiki). It includes comprehensive explanations for how to use the [GUI](https://github.com/aa-sikkkk/C-syntaxChecker/wiki/How-to-Use-the-Tool!) and the [CLI](https://github.com/aa-sikkkk/C-syntaxChecker/wiki/How-to-Use-the-Tool!). The Wiki is open to edits by the community, so you, yes you, can also correct errors or add new contents to the documentations.
 
 
 ## 🤝 Contributing
