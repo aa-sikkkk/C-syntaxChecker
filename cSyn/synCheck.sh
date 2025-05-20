@@ -16,53 +16,98 @@ _|        _|    _|  _|        _|        _|  _|    _|        _|
   _|_|_|  _|    _|    _|_|_|    _|_|_|  _|    _|    _|_|_|  _|        
 EOF
 
-# Check if either input_file.c or input_file.cpp exists in the current directory
-if [ -f "input_file.c" ]; then
-    input_file="input_file.c"
-elif [ -f "input_file.cpp" ]; then
-    input_file="input_file.cpp"
-else
-    echo "Error: Neither input_file.c nor input_file.cpp found in the current directory."
+# Function to display error messages
+error_message() {
+    echo -e "\e[31mError: $1\e[0m"
     exit 1
-fi
+}
 
-# This compiles the input file
-echo "Compiling $input_file..."
-gcc -o main "$input_file"
+# Function to display success messages
+success_message() {
+    echo -e "\e[32m$1\e[0m"
+}
 
-# This checks if the compilation was successful
-if [ $? -ne 0 ]; then
-    echo "Compilation failed. Please fix the errors in $input_file."
-    exit 1
-fi
-echo "Compilation successful."
-
-# Runs the shell script and shows the progress of the syntax checker
-echo "Running syntax checker..."
-(
-    while true; do
-        echo -n "."
-        sleep 1
+# Function to display progress
+show_progress() {
+    local pid=$1
+    local delay=0.1
+    local spinstr='|/-\'
+    while ps -p $pid > /dev/null; do
+        local temp=${spinstr#?}
+        printf " [%c]  " "$spinstr"
+        local spinstr=$temp${spinstr%"$temp"}
+        sleep $delay
+        printf "\b\b\b\b\b\b"
     done
-) &
+    printf "    \b\b\b\b"
+}
 
-# Store the PID of the progress indicator
-PROGRESS_PID=$!
+# Check for required tools
+command -v gcc >/dev/null 2>&1 || error_message "gcc is required but not installed"
+command -v make >/dev/null 2>&1 || error_message "make is required but not installed"
 
-# Executes the compiled program and saves the output to output.txt
-./main > output.txt
+# Create output directory if it doesn't exist
+mkdir -p output
 
-# Stops the progress indicator
-kill $PROGRESS_PID
-wait $PROGRESS_PID 2>/dev/null
+# Find all C and C++ files in the current directory
+files=($(find . -maxdepth 1 -type f \( -name "*.c" -o -name "*.cpp" \)))
 
-# Checks if the output.txt file was created
-if [ -f "output.txt" ]; then
-    echo -e "\nSyntax checking completed. Results saved to output.txt."
-else
-    echo -e "\nError: output.txt was not created."
-    exit 1
+if [ ${#files[@]} -eq 0 ]; then
+    error_message "No .c or .cpp files found in the current directory"
 fi
 
-# This stops the script from closing immediately
+# Process each file
+for file in "${files[@]}"; do
+    echo "Processing $file..."
+    
+    # Compile the file
+    echo "Compiling $file..."
+    gcc -o "${file%.*}" "$file" 2> "output/${file##*/}.compile.log"
+    
+    if [ $? -ne 0 ]; then
+        error_message "Compilation failed for $file. Check output/${file##*/}.compile.log for details"
+    fi
+    
+    success_message "Compilation successful for $file"
+    
+    # Run the syntax checker
+    echo "Running syntax checker..."
+    ./synCheck.exe "$file" > "output/${file##*/}.analysis.txt" &
+    checker_pid=$!
+    
+    # Show progress while the checker is running
+    show_progress $checker_pid
+    
+    # Wait for the checker to complete
+    wait $checker_pid
+    
+    if [ $? -ne 0 ]; then
+        error_message "Syntax checking failed for $file"
+    fi
+    
+    success_message "Syntax checking completed for $file"
+done
+
+# Generate summary report
+echo "Generating summary report..."
+{
+    echo "Syntax Check Summary Report"
+    echo "=========================="
+    echo "Date: $(date)"
+    echo
+    echo "Files Processed:"
+    for file in "${files[@]}"; do
+        echo "- $file"
+    done
+    echo
+    echo "Results:"
+    for file in "${files[@]}"; do
+        echo "- $file: output/${file##*/}.analysis.txt"
+    done
+} > "output/summary.txt"
+
+success_message "Analysis complete! Check the output directory for results."
+echo "Summary report: output/summary.txt"
+
+# Keep the window open
 read -p "Press [Enter] to exit..."

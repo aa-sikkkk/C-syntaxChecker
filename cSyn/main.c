@@ -1,5 +1,5 @@
 // Author: Aas1kkk
-// Date: 2024-07-13
+// Date: 2025-05-20
 // Description: A tool designed to analyze and validate the syntax of C and C++ codebases. It ensures code quality by detecting common syntax errors and providing detailed reports.
 // File version: 1.2
 // Last Update: 2024-07-17
@@ -17,6 +17,13 @@ typedef struct {
     int line_length;
     char line_text[1024];
 } FileLine;
+
+// Structure to track bracket positions
+typedef struct {
+    int line_number;
+    int position;
+    char type;  // '{', '}', '(', ')', '[', ']'
+} BracketInfo;
 
 // Function declarations
 void print_lines(FileLine lines[], int total_lines, FILE *output_file);
@@ -41,6 +48,11 @@ void check_class_usage(FileLine lines[], int total_lines, FILE *output_file);
 void check_templates(FileLine lines[], int total_lines, FILE *output_file);
 void analyze_file(const char *input_filename, FILE *output_file);
 int calculate_cyclomatic_complexity(FileLine lines[], int total_lines);
+void check_memory_leaks(FileLine lines[], int total_lines, FILE *output_file);
+void check_pointer_usage(FileLine lines[], int total_lines, FILE *output_file);
+void check_array_bounds(FileLine lines[], int total_lines, FILE *output_file);
+void check_type_safety(FileLine lines[], int total_lines, FILE *output_file);
+void check_naming_conventions(FileLine lines[], int total_lines, FILE *output_file);
 
 // Function to process a single file
 // Function to process a single file
@@ -126,6 +138,12 @@ void analyze_file(const char *input_filename, FILE *output_file) {
     int cyclomatic_complexity = calculate_cyclomatic_complexity(lines, total_lines);
     fprintf(output_file, "Cyclomatic Complexity: %d\n", cyclomatic_complexity);
 
+    check_memory_leaks(lines, total_lines, output_file);
+    check_pointer_usage(lines, total_lines, output_file);
+    check_array_bounds(lines, total_lines, output_file);
+    check_type_safety(lines, total_lines, output_file);
+    check_naming_conventions(lines, total_lines, output_file);
+
     fprintf(output_file, "\n");
 
     // Free allocated memory
@@ -173,18 +191,100 @@ int find_comment_position(char line[], int line_length) {
 
 // Function to check for matching brackets
 void check_brackets(FileLine lines[], int total_lines, FILE *output_file) {
-    int open_brackets = 0, close_brackets = 0;
+    BracketInfo *brackets = malloc(total_lines * sizeof(BracketInfo));
+    int bracket_count = 0;
+    int stack[1000];  // Stack to track bracket pairs
+    int stack_top = -1;
+    int error_found = 0;
+
+    // First pass: collect all brackets and their positions
     for (int i = 0; i < total_lines; i++) {
         for (int j = 0; j < lines[i].line_length; j++) {
-            if (lines[i].line_text[j] == '{') open_brackets++;
-            if (lines[i].line_text[j] == '}') close_brackets++;
+            char c = lines[i].line_text[j];
+            if (c == '{' || c == '}' || c == '(' || c == ')' || c == '[' || c == ']') {
+                brackets[bracket_count].line_number = i + 1;
+                brackets[bracket_count].position = j;
+                brackets[bracket_count].type = c;
+                bracket_count++;
+            }
         }
     }
-    if (open_brackets != close_brackets) {
-        fprintf(output_file, "Error: Mismatched brackets detected.\n");
-    } else {
-        fprintf(output_file, "Brackets are balanced.\n");
+
+    // Second pass: check for matching brackets
+    for (int i = 0; i < bracket_count; i++) {
+        char c = brackets[i].type;
+        if (c == '{' || c == '(' || c == '[') {
+            stack[++stack_top] = i;  // Push opening bracket index
+        } else {  // Closing bracket
+            if (stack_top == -1) {
+                // Found closing bracket without matching opening bracket
+                fprintf(output_file, "Error: Unmatched closing bracket '%c' at line %d, position %d\n",
+                        c, brackets[i].line_number, brackets[i].position + 1);
+                error_found = 1;
+            } else {
+                // Check if this closing bracket matches the last opening bracket
+                int open_idx = stack[stack_top];
+                char open_type = brackets[open_idx].type;
+                
+                // Check for proper bracket matching
+                if ((open_type == '{' && c == '}') ||
+                    (open_type == '(' && c == ')') ||
+                    (open_type == '[' && c == ']')) {
+                    stack_top--;  // Pop the matching opening bracket
+                    
+                    // Check for proper nesting
+                    if (brackets[i].line_number - brackets[open_idx].line_number > 100) {
+                        fprintf(output_file, "Warning: Large gap between matching brackets at lines %d and %d\n",
+                                brackets[open_idx].line_number, brackets[i].line_number);
+                    }
+                } else {
+                    // Mismatched bracket types
+                    fprintf(output_file, "Error: Mismatched bracket types '%c' and '%c' at lines %d and %d\n",
+                            open_type, c, brackets[open_idx].line_number, brackets[i].line_number);
+                    error_found = 1;
+                    stack_top--;  // Pop the mismatched opening bracket
+                }
+            }
+        }
     }
+
+    // Check for any remaining unclosed brackets
+    while (stack_top >= 0) {
+        int open_idx = stack[stack_top--];
+        fprintf(output_file, "Error: Unclosed opening bracket '%c' at line %d, position %d\n",
+                brackets[open_idx].type, brackets[open_idx].line_number, brackets[open_idx].position + 1);
+        error_found = 1;
+    }
+
+    // Check for common bracket-related issues
+    for (int i = 0; i < total_lines; i++) {
+        // Check for empty blocks
+        if (strstr(lines[i].line_text, "{") && strstr(lines[i].line_text, "}")) {
+            char *open = strchr(lines[i].line_text, '{');
+            char *close = strchr(lines[i].line_text, '}');
+            if (close - open == 1) {
+                fprintf(output_file, "Warning: Empty block detected at line %d\n", i + 1);
+            }
+        }
+        
+        // Check for missing spaces around brackets
+        if (strstr(lines[i].line_text, "){") || strstr(lines[i].line_text, "){") ||
+            strstr(lines[i].line_text, "if{") || strstr(lines[i].line_text, "while{") ||
+            strstr(lines[i].line_text, "for{")) {
+            fprintf(output_file, "Warning: Missing space before opening bracket at line %d\n", i + 1);
+        }
+
+        // Check for balanced parentheses in function calls
+        if (strstr(lines[i].line_text, "(") && !strstr(lines[i].line_text, ")")) {
+            fprintf(output_file, "Warning: Possible unclosed function call at line %d\n", i + 1);
+        }
+    }
+
+    if (!error_found) {
+        fprintf(output_file, "All brackets are properly matched and balanced.\n");
+    }
+
+    free(brackets);
 }
 
 // Function to check for specific keywords in the code
@@ -403,4 +503,72 @@ int calculate_cyclomatic_complexity(FileLine lines[], int total_lines) {
         }
     }
     return complexity;
+}
+
+void check_memory_leaks(FileLine lines[], int total_lines, FILE *output_file) {
+    int malloc_count = 0, free_count = 0;
+    for (int i = 0; i < total_lines; i++) {
+        if (strstr(lines[i].line_text, "malloc") || strstr(lines[i].line_text, "calloc")) {
+            malloc_count++;
+        }
+        if (strstr(lines[i].line_text, "free")) {
+            free_count++;
+        }
+    }
+    if (malloc_count != free_count) {
+        fprintf(output_file, "Warning: Potential memory leak detected. malloc/calloc calls: %d, free calls: %d\n", 
+                malloc_count, free_count);
+    }
+}
+
+void check_pointer_usage(FileLine lines[], int total_lines, FILE *output_file) {
+    for (int i = 0; i < total_lines; i++) {
+        if (strstr(lines[i].line_text, "*") && !strstr(lines[i].line_text, "/*") && !strstr(lines[i].line_text, "*/")) {
+            if (!strstr(lines[i].line_text, "&") && !strstr(lines[i].line_text, "->")) {
+                fprintf(output_file, "Line %d: Potential unsafe pointer usage detected\n", lines[i].line_number);
+            }
+        }
+    }
+}
+
+void check_array_bounds(FileLine lines[], int total_lines, FILE *output_file) {
+    for (int i = 0; i < total_lines; i++) {
+        if (strstr(lines[i].line_text, "[") && strstr(lines[i].line_text, "]")) {
+            if (strstr(lines[i].line_text, "for") && strstr(lines[i].line_text, "i++")) {
+                fprintf(output_file, "Line %d: Potential array bounds check needed\n", lines[i].line_number);
+            }
+        }
+    }
+}
+
+void check_type_safety(FileLine lines[], int total_lines, FILE *output_file) {
+    const char *type_keywords[] = {"int", "float", "double", "char", "void", "long", "short"};
+    int type_count = sizeof(type_keywords) / sizeof(type_keywords[0]);
+    
+    for (int i = 0; i < total_lines; i++) {
+        for (int j = 0; j < type_count; j++) {
+            if (strstr(lines[i].line_text, type_keywords[j])) {
+                if (strstr(lines[i].line_text, "=") && !strstr(lines[i].line_text, "==")) {
+                    fprintf(output_file, "Line %d: Type safety check recommended for %s\n", 
+                            lines[i].line_number, type_keywords[j]);
+                }
+            }
+        }
+    }
+}
+
+void check_naming_conventions(FileLine lines[], int total_lines, FILE *output_file) {
+    for (int i = 0; i < total_lines; i++) {
+        if (strstr(lines[i].line_text, "int") || strstr(lines[i].line_text, "float") || 
+            strstr(lines[i].line_text, "double") || strstr(lines[i].line_text, "char")) {
+            char *var_name = strstr(lines[i].line_text, " ");
+            if (var_name) {
+                var_name++; // Skip the space
+                if (islower(var_name[0])) {
+                    fprintf(output_file, "Line %d: Variable naming convention check - consider using more descriptive names\n", 
+                            lines[i].line_number);
+                }
+            }
+        }
+    }
 }

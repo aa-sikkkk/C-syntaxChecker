@@ -1,114 +1,376 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Code Analysis Report</title>
-<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <title>Code Analysis Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .code-line:hover {
+            background-color: #f3f4f6;
+        }
+        .error-line {
+            border-left: 4px solid #ef4444;
+            background-color: #fee2e2;
+        }
+        .warning-line {
+            border-left: 4px solid #f59e0b;
+            background-color: #fef3c7;
+        }
+        .success-line {
+            border-left: 4px solid #10b981;
+            background-color: #d1fae5;
+        }
+        .collapsible {
+            cursor: pointer;
+            padding: 18px;
+            width: 100%;
+            border: none;
+            text-align: left;
+            outline: none;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .active, .collapsible:hover {
+            background-color: #e2e8f0;
+        }
+        .content {
+            padding: 0 18px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.2s ease-out;
+            background-color: white;
+        }
+        #file-input {
+            display: none;
+        }
+        .issue-card {
+            border-radius: 8px;
+            padding: 12px;
+            margin-bottom: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .code-block {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: #1f2937;
+            color: #e5e7eb;
+            padding: 12px;
+            border-radius: 4px;
+            margin: 8px 0;
+            overflow-x: auto;
+        }
+        .line-number {
+            color: #9ca3af;
+            margin-right: 12px;
+            user-select: none;
+        }
+        .issue-severity {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        .severity-high {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .severity-medium {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .severity-low {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+    </style>
 </head>
 <body class="bg-gray-100 font-sans leading-normal tracking-normal">
-<div class="container mx-auto p-4">
-<h1 class="text-3xl font-bold mb-4">Code Analysis Report</h1>
-<div class="p-4 bg-white shadow-md rounded-md mb-4">
-<h2 class="text-2xl font-bold mb-2">Analysis for file: input_file.c</h2>
-<pre class="bg-gray-200 p-2 rounded-md mb-4">
-Line 1: #include <stdio.h>
-Line 2: #include <stdlib.h>
-Line 3: int main() {
-Line 4:     int a = 5;
-Line 5:     int b = 10;
-Line 6:     printf("This is a test program.\n")
-Line 7:     if (a > b {
-Line 8:         printf("a is greater than b\n");
-Line 9:     else {
-Line 10:         printf("a is less than or equal to b\n");
-Line 11:     }
-Line 12:     floot c = 3.14;
-Line 13:     prntf("Value of c: %f\n", c);
-Line 14:     for int i = 0; i < 5; i++) {
-Line 15:         printf("i = %d\n", i);
-Line 16:     }
-Line 17:     Line 18:     int result = multiply(a, b);
-Line 19:     printf("Result: %d\n", result);
-Line 20:     Line 21:     int multiply(int x, int y) {
-Line 22:         return x * y;
-Line 23:     }
-Line 24:     Line 25:     int arr[5 = {1, 2, 3, 4, 5};
-Line 26:     Line 27:     int *p = &a;
-Line 28:     printf("Value pointed by p: %d\n", *p);
-Line 29:     p + 1; Line 30:     Line 31:     char *str = malloc(50);
-Line 32:     strcpy(str, "Hello, World!");
-Line 33:     Line 34:     while (a < 20);
-Line 35:         printf("a is less than 20\n");
-Line 36:     Line 37:     int x, y;
-Line 38:     Line 39:     return 0;
-Line 40: int multiply(int x, int y) {
-Line 41:     return x * y;
-Line 42: }
-Line 43: </pre>
-<p class="text-red-500">Line 7: Mismatched opening bracket.</p>
-<p class="text-red-500">Line 3: Mismatched opening bracket.</p>
-<p class="text-yellow-500">Line 3: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 4: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 5: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 6: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 7: Keyword 'if' detected.</p>
-<p class="text-yellow-500">Line 8: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 9: Keyword 'else' detected.</p>
-<p class="text-yellow-500">Line 10: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 14: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 14: Keyword 'for' detected.</p>
-<p class="text-yellow-500">Line 15: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 18: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 19: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 21: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 25: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 27: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 28: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 31: Keyword 'char' detected.</p>
-<p class="text-yellow-500">Line 34: Keyword 'while' detected.</p>
-<p class="text-yellow-500">Line 35: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 37: Keyword 'int' detected.</p>
-<p class="text-yellow-500">Line 40: Keyword 'int' detected.</p>
-<p class="text-blue-500">Number of functions: 3</p>
-<p class="text-blue-500">Number of function prototypes: 0</p>
-<p class="text-purple-500">Line 6: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 8: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 10: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 15: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 19: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 28: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 35: Built-in function usage 'printf' detected.</p>
-<p class="text-purple-500">Line 6: Print function detected.</p>
-<p class="text-purple-500">Line 8: Print function detected.</p>
-<p class="text-purple-500">Line 10: Print function detected.</p>
-<p class="text-purple-500">Line 15: Print function detected.</p>
-<p class="text-purple-500">Line 19: Print function detected.</p>
-<p class="text-purple-500">Line 28: Print function detected.</p>
-<p class="text-purple-500">Line 35: Print function detected.</p>
-<p class="text-blue-500">Number of variables declared: 14</p>
-<p class="text-red-500">Line 1: Missing semicolon.</p>
-<p class="text-red-500">Line 2: Missing semicolon.</p>
-<p class="text-red-500">Line 3: Missing semicolon.</p>
-<p class="text-red-500">Line 6: Missing semicolon.</p>
-<p class="text-red-500">Line 7: Missing semicolon.</p>
-<p class="text-red-500">Line 9: Missing semicolon.</p>
-<p class="text-red-500">Line 11: Missing semicolon.</p>
-<p class="text-red-500">Line 14: Missing semicolon.</p>
-<p class="text-red-500">Line 16: Missing semicolon.</p>
-<p class="text-red-500">Line 17: Missing semicolon.</p>
-<p class="text-red-500">Line 20: Missing semicolon.</p>
-<p class="text-red-500">Line 21: Missing semicolon.</p>
-<p class="text-red-500">Line 23: Missing semicolon.</p>
-<p class="text-red-500">Line 24: Missing semicolon.</p>
-<p class="text-red-500">Line 26: Missing semicolon.</p>
-<p class="text-red-500">Line 30: Missing semicolon.</p>
-<p class="text-red-500">Line 33: Missing semicolon.</p>
-<p class="text-red-500">Line 36: Missing semicolon.</p>
-<p class="text-red-500">Line 38: Missing semicolon.</p>
-<p class="text-red-500">Line 40: Missing semicolon.</p>
-<p class="text-red-500">Line 42: Missing semicolon.</p>
-<p class="mt-4">Cyclomatic Complexity: <span class="font-bold">3</span></p>
-</div>
-</div>
+    <div class="container mx-auto p-4">
+        <header class="bg-white shadow-md rounded-md p-4 mb-4">
+            <h1 class="text-3xl font-bold mb-2">Code Analysis Report</h1>
+            <p class="text-gray-600">Generated on: <span id="generation-date"></span></p>
+            <div class="mt-4">
+                <label for="file-input" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
+                    Select Analysis File
+                </label>
+                <input type="file" id="file-input" accept=".txt">
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div class="bg-white p-4 rounded-md shadow-md">
+                <h3 class="text-lg font-semibold mb-2">Code Metrics</h3>
+                <div class="space-y-2">
+                    <p>Total Lines: <span id="total-lines" class="font-semibold">0</span></p>
+                    <p>Functions: <span id="total-functions" class="font-semibold">0</span></p>
+                    <p>Variables: <span id="total-variables" class="font-semibold">0</span></p>
+                    <p>Complexity: <span id="complexity" class="font-semibold">0</span></p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-md shadow-md">
+                <h3 class="text-lg font-semibold mb-2">Issue Summary</h3>
+                <div class="space-y-2">
+                    <p>Critical Issues: <span id="error-count" class="text-red-500 font-semibold">0</span></p>
+                    <p>Warnings: <span id="warning-count" class="text-yellow-500 font-semibold">0</span></p>
+                    <p>Suggestions: <span id="suggestion-count" class="text-blue-500 font-semibold">0</span></p>
+                </div>
+            </div>
+            <div class="bg-white p-4 rounded-md shadow-md">
+                <h3 class="text-lg font-semibold mb-2">Code Quality</h3>
+                <canvas id="complexity-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="bg-white shadow-md rounded-md p-4 mb-4">
+            <h2 class="text-2xl font-bold mb-4">Detailed Analysis</h2>
+            
+            <div class="mb-4">
+                <button class="collapsible">
+                    <span>Code Overview</span>
+                    <span class="text-gray-500">▼</span>
+                </button>
+                <div class="content">
+                    <div class="code-block" id="code-content"></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <button class="collapsible">
+                    <span>Critical Issues</span>
+                    <span class="text-red-500" id="critical-count">0</span>
+                </button>
+                <div class="content">
+                    <div id="syntax-analysis" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <button class="collapsible">
+                    <span>Memory & Safety</span>
+                    <span class="text-yellow-500" id="memory-count">0</span>
+                </button>
+                <div class="content">
+                    <div id="memory-analysis" class="space-y-4"></div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <button class="collapsible">
+                    <span>Code Style & Best Practices</span>
+                    <span class="text-blue-500" id="style-count">0</span>
+                </button>
+                <div class="content">
+                    <div id="style-analysis" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set generation date
+        document.getElementById('generation-date').textContent = new Date().toLocaleString();
+
+        // Initialize collapsible sections
+        document.querySelectorAll('.collapsible').forEach(button => {
+            button.addEventListener('click', function() {
+                this.classList.toggle('active');
+                const content = this.nextElementSibling;
+                if (content.style.maxHeight) {
+                    content.style.maxHeight = null;
+                } else {
+                    content.style.maxHeight = content.scrollHeight + "px";
+                }
+            });
+        });
+
+        // Function to parse the output file content
+        function parseOutputContent(text) {
+            const lines = text.split('\n');
+            
+            let stats = {
+                totalLines: 0,
+                functions: 0,
+                variables: 0,
+                complexity: 0,
+                errors: 0,
+                warnings: 0,
+                suggestions: 0,
+                codeContent: [],
+                syntaxIssues: [],
+                memoryIssues: [],
+                styleIssues: []
+            };
+
+            lines.forEach(line => {
+                // Count functions
+                if (line.includes('Number of functions:')) {
+                    stats.functions = parseInt(line.split(':')[1].trim());
+                }
+                // Count variables
+                if (line.includes('Number of variables:')) {
+                    stats.variables = parseInt(line.split(':')[1].trim());
+                }
+                // Count complexity
+                if (line.includes('Cyclomatic Complexity:')) {
+                    stats.complexity = parseInt(line.split(':')[1].trim());
+                }
+                // Count errors and warnings
+                if (line.includes('Error:')) {
+                    stats.errors++;
+                    stats.syntaxIssues.push({
+                        type: 'error',
+                        line: line,
+                        severity: 'high'
+                    });
+                }
+                if (line.includes('Warning:')) {
+                    stats.warnings++;
+                    stats.memoryIssues.push({
+                        type: 'warning',
+                        line: line,
+                        severity: 'medium'
+                    });
+                }
+                // Collect code content
+                if (line.startsWith('Line ')) {
+                    stats.codeContent.push(line);
+                    stats.totalLines++;
+                }
+                // Collect style issues
+                if (line.includes('Variable naming convention') || 
+                    line.includes('Missing space') || 
+                    line.includes('Empty block')) {
+                    stats.suggestions++;
+                    stats.styleIssues.push({
+                        type: 'suggestion',
+                        line: line,
+                        severity: 'low'
+                    });
+                }
+            });
+
+            // If no complexity was found, calculate it based on control structures
+            if (stats.complexity === 0) {
+                stats.complexity = lines.filter(line => 
+                    line.includes('if') || 
+                    line.includes('for') || 
+                    line.includes('while') || 
+                    line.includes('switch')
+                ).length + 1; // Base complexity is 1
+            }
+
+            updateUI(stats);
+        }
+
+        // Function to create an issue card
+        function createIssueCard(issue) {
+            const severityClass = {
+                'high': 'severity-high',
+                'medium': 'severity-medium',
+                'low': 'severity-low'
+            }[issue.severity];
+
+            return `
+                <div class="issue-card bg-white">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="issue-severity ${severityClass}">${issue.severity.toUpperCase()}</span>
+                    </div>
+                    <p class="text-gray-800">${issue.line}</p>
+                </div>
+            `;
+        }
+
+        // Function to format code content
+        function formatCodeContent(lines) {
+            return lines.map(line => {
+                const lineNumber = line.split(':')[0].replace('Line ', '');
+                const content = line.split(':').slice(1).join(':').trim();
+                return `<div class="flex">
+                    <span class="line-number">${lineNumber}</span>
+                    <span>${content}</span>
+                </div>`;
+            }).join('');
+        }
+
+        // Function to update the UI with parsed data
+        function updateUI(stats) {
+            // Update summary statistics
+            document.getElementById('total-lines').textContent = stats.totalLines;
+            document.getElementById('total-functions').textContent = stats.functions;
+            document.getElementById('total-variables').textContent = stats.variables;
+            document.getElementById('complexity').textContent = stats.complexity;
+            document.getElementById('error-count').textContent = stats.errors;
+            document.getElementById('warning-count').textContent = stats.warnings;
+            document.getElementById('suggestion-count').textContent = stats.suggestions;
+
+            // Update issue counts in headers
+            document.getElementById('critical-count').textContent = stats.errors;
+            document.getElementById('memory-count').textContent = stats.warnings;
+            document.getElementById('style-count').textContent = stats.suggestions;
+
+            // Update code content
+            document.getElementById('code-content').innerHTML = formatCodeContent(stats.codeContent);
+
+            // Update syntax analysis
+            document.getElementById('syntax-analysis').innerHTML = stats.syntaxIssues
+                .map(issue => createIssueCard(issue))
+                .join('');
+
+            // Update memory analysis
+            document.getElementById('memory-analysis').innerHTML = stats.memoryIssues
+                .map(issue => createIssueCard(issue))
+                .join('');
+
+            // Update style analysis
+            document.getElementById('style-analysis').innerHTML = stats.styleIssues
+                .map(issue => createIssueCard(issue))
+                .join('');
+
+            // Update complexity chart
+            const ctx = document.getElementById('complexity-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Low', 'Medium', 'High'],
+                    datasets: [{
+                        data: [
+                            stats.complexity < 10 ? stats.complexity : 0,
+                            stats.complexity >= 10 && stats.complexity < 20 ? stats.complexity : 0,
+                            stats.complexity >= 20 ? stats.complexity : 0
+                        ],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Code Complexity Distribution'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Handle file input
+        document.getElementById('file-input').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    parseOutputContent(e.target.result);
+                };
+                reader.readAsText(file);
+            }
+        });
+    </script>
 </body>
 </html>

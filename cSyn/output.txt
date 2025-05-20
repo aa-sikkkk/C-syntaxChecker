@@ -1,0 +1,97 @@
+Line 1: #include <stdio.h>
+Line 2: #include <stdlib.h>
+Line 3: Line 4: int main() {
+Line 5:     Line 6:     int a = 5
+Line 7:     float b = 3.14
+Line 8:     
+Line 9:     Line 10:     if (a > b {
+Line 11:         printf("a is greater than b\n");
+Line 12:     else {
+Line 13:         printf("a is less than or equal to b\n");
+Line 14:     }
+Line 15:     
+Line 16:     Line 17:     for (int i = 0; i < 5; i++) {
+Line 18:         if (i % 2 == 0) {
+Line 19:             printf("Even number: %d\n", i);
+Line 20:         } else {
+Line 21:             printf("Odd number: %d\n", i);
+Line 22:         }
+Line 23:     }
+Line 24:     
+Line 25:     Line 26:     int arr[5 = {1, 2, 3, 4, 5};
+Line 27:     
+Line 28:     Line 29:     printf("Hello, World!\n"
+Line 30:     
+Line 31:     Line 32:     char *str = malloc(50);
+Line 33:     strcpy(str, "Hello");
+Line 34:     
+Line 35:     Line 36:     int *ptr;
+Line 37:     *ptr = 10;  Line 38:     
+Line 39:     Line 40:     int arr2[5];
+Line 41:     arr2[5] = 10;  Line 42:     
+Line 43:     Line 44:     int x = 3.14;  Line 45:     
+Line 46:     Line 47:     int i = 0;
+Line 48:     int j = 1;
+Line 49:     
+Line 50:     Line 51:     Line 52: } Error: Mismatched brackets detected.
+Line 4: Found keyword 'int'
+Line 6: Found keyword 'int'
+Line 7: Found keyword 'float'
+Line 10: Found keyword 'if'
+Line 11: Found keyword 'int'
+Line 12: Found keyword 'else'
+Line 13: Found keyword 'int'
+Line 17: Found keyword 'int'
+Line 17: Found keyword 'for'
+Line 18: Found keyword 'if'
+Line 19: Found keyword 'int'
+Line 20: Found keyword 'else'
+Line 21: Found keyword 'int'
+Line 26: Found keyword 'int'
+Line 29: Found keyword 'int'
+Line 36: Found keyword 'int'
+Line 40: Found keyword 'int'
+Line 44: Found keyword 'int'
+Line 47: Found keyword 'int'
+Line 48: Found keyword 'int'
+Number of functions: 2
+Number of function prototypes: 7
+Line 11: Found keyword usage 'printf'
+Line 13: Found keyword usage 'printf'
+Line 19: Found keyword usage 'printf'
+Line 21: Found keyword usage 'printf'
+Line 29: Found keyword usage 'printf'
+Line 32: Found built-in function usage 'malloc'
+Line 11: Found print function usage
+Line 13: Found print function usage
+Line 19: Found print function usage
+Line 21: Found print function usage
+Line 29: Found print function usage
+Number of variables: 16
+Line 1: Missing semicolon at the end
+Line 2: Missing semicolon at the end
+Line 5: Missing semicolon at the end
+Line 6: Missing semicolon at the end
+Line 7: Missing semicolon at the end
+Line 8: Missing semicolon at the end
+Line 9: Missing semicolon at the end
+Line 15: Missing semicolon at the end
+Line 16: Missing semicolon at the end
+Line 24: Missing semicolon at the end
+Line 25: Missing semicolon at the end
+Line 27: Missing semicolon at the end
+Line 28: Missing semicolon at the end
+Line 29: Missing semicolon at the end
+Line 30: Missing semicolon at the end
+Line 31: Missing semicolon at the end
+Line 34: Missing semicolon at the end
+Line 35: Missing semicolon at the end
+Line 38: Missing semicolon at the end
+Line 39: Missing semicolon at the end
+Line 42: Missing semicolon at the end
+Line 43: Missing semicolon at the end
+Line 45: Missing semicolon at the end
+Line 46: Missing semicolon at the end
+Line 49: Missing semicolon at the end
+Line 50: Missing semicolon at the end
+Line 51: Missing semicolon at the end
