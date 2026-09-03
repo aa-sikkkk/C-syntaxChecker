@@ -1,13 +1,18 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c11 -Iheaders
-SOURCES = main.c helpers/style_check.c
-OBJECTS = $(SOURCES:.c=.o)
-EXECUTABLE = code_analysis_tool
+.PHONY: all cli gui test clean
 
-all: $(EXECUTABLE)
+all: cli
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(CFLAGS) -o $@ $^
+cli:
+	$(MAKE) -C cSyn
+
+gui:
+	$(MAKE) -C cSyn/GUI
+
+test:
+	$(MAKE) -C cSyn test
+	$(MAKE) -C unittest test
 
 clean:
-	rm -f $(OBJECTS) $(EXECUTABLE)
+	$(MAKE) -C cSyn clean
+	$(MAKE) -C cSyn/GUI clean
+	$(MAKE) -C unittest clean

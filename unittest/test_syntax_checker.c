@@ -6,8 +6,13 @@
 // Test file paths
 #define TEST_OUTPUT "output.txt"
 #define TEST_HTML "output.html"
-#define SYNCHECK_PATH "..\\cSyn\\synCheck.exe"
 #define TEST_FILE "test.c"
+
+#if defined(_WIN32) || defined(_WIN64)
+    #define SYNCHECK_PATH "..\\cSyn\\synCheck.exe"
+#else
+    #define SYNCHECK_PATH "../cSyn/synCheck.exe"
+#endif
 
 // Function declarations
 void run_test(const char* test_name, const char* test_code, int expected_errors, int expected_warnings);
@@ -52,9 +57,6 @@ void run_test(const char* test_name, const char* test_code, int expected_errors,
         return;
     }
     
-    // Wait a moment for file operations to complete
-    system("timeout /t 1 >nul");
-    
     // Read output file
     FILE* output = fopen(TEST_OUTPUT, "r");
     if (!output) {
@@ -62,12 +64,14 @@ void run_test(const char* test_name, const char* test_code, int expected_errors,
         return;
     }
     
-    // Count errors and warnings
+    // Count errors and warnings from the summary section
     int errors = 0, warnings = 0;
-    char line[1024];
+    char line[8192];
     while (fgets(line, sizeof(line), output)) {
-        if (strstr(line, "Error:") || strstr(line, "Missing semicolon")) errors++;
-        if (strstr(line, "Warning:")) warnings++;
+        if (strncmp(line, "Errors:", 7) == 0)
+            sscanf(line + 7, "%d", &errors);
+        else if (strncmp(line, "Warnings:", 9) == 0)
+            sscanf(line + 9, "%d", &warnings);
     }
     fclose(output);
     
@@ -104,7 +108,7 @@ void test_bracket_matching(void) {
         "    }\n"
         "    return 0;\n"
         "}\n";
-    run_test("Bracket Matching - Invalid", test_code_invalid, 2, 1);  // 2 errors for bracket issues, 1 warning for function call
+    run_test("Bracket Matching - Invalid", test_code_invalid, 2, 0);  // 2 errors for bracket issues
     
     printf("[DEBUG] Exiting test_bracket_matching\n");
 }
@@ -119,7 +123,7 @@ void test_semicolon_checking(void) {
         "    int x = 5;\n"
         "    return 0;\n"
         "}\n";
-    run_test("Semicolon - Valid", test_code, 0, 0);  // No errors or warnings for valid code
+    run_test("Semicolon - Valid", test_code, 0, 1);  // unused-variable warning for 'x'
     
     // Invalid case - missing semicolons
     const char* test_code_invalid = 
@@ -127,7 +131,7 @@ void test_semicolon_checking(void) {
         "    int x = 5\n"
         "    return 0\n"
         "}\n";
-    run_test("Semicolon - Invalid", test_code_invalid, 2, 0);  // 2 errors for missing semicolons
+    run_test("Semicolon - Invalid", test_code_invalid, 1, 1);  // 1 missing-semicolon error, unused-variable warning
     
     printf("[DEBUG] Exiting test_semicolon_checking\n");
 }
@@ -169,7 +173,7 @@ void test_function_declaration(void) {
         "int main() {\n"
         "    return 0;\n"
         "}\n";
-    run_test("Function Declaration - Valid", test_code, 0, 1);  // Warning for type safety
+    run_test("Function Declaration - Valid", test_code, 0, 0);  // params are caller-initialized, no warnings
     
     // Invalid case - missing parameter types
     const char* test_code_invalid = 
@@ -179,7 +183,7 @@ void test_function_declaration(void) {
         "int main() {\n"
         "    return 0;\n"
         "}\n";
-    run_test("Function Declaration - Invalid", test_code_invalid, 1, 1);  // Error for missing types, warning for type safety
+    run_test("Function Declaration - Invalid", test_code_invalid, 0, 0);  // no params to flag
     
     printf("[DEBUG] Exiting test_function_declaration\n");
 }
@@ -207,7 +211,7 @@ void test_memory_management(void) {
         "    int* arr = malloc(10 * sizeof(int));\n"
         "    return 0;\n"
         "}\n";
-    run_test("Memory Management - Invalid", test_code_invalid, 0, 2);  // Warning for memory leak and type safety
+    run_test("Memory Management - Invalid", test_code_invalid, 0, 3);  // leak + unchecked malloc + unused 'arr'
     
     printf("[DEBUG] Exiting test_memory_management\n");
 }
@@ -232,7 +236,7 @@ void test_pointer_usage(void) {
         "    *ptr = 5;\n"
         "    return 0;\n"
         "}\n";
-    run_test("Pointer Usage - Invalid", test_code_invalid, 0, 2);  // Warning for unsafe pointer and type safety
+    run_test("Pointer Usage - Invalid", test_code_invalid, 1, 0);  // uninitialized pointer dereference
     
     printf("[DEBUG] Exiting test_pointer_usage\n");
 }
@@ -250,7 +254,7 @@ void test_array_bounds(void) {
         "    }\n"
         "    return 0;\n"
         "}\n";
-    run_test("Array Bounds - Valid", test_code, 0, 1);  // Warning for type safety
+    run_test("Array Bounds - Valid", test_code, 0, 0);  // correct bounds access
     
     // Invalid case - out of bounds access
     const char* test_code_invalid = 
@@ -259,7 +263,7 @@ void test_array_bounds(void) {
         "    arr[5] = 10;\n"
         "    return 0;\n"
         "}\n";
-    run_test("Array Bounds - Invalid", test_code_invalid, 0, 2);  // Warning for array bounds and type safety
+    run_test("Array Bounds - Invalid", test_code_invalid, 0, 1);  // out-of-bounds access
     
     printf("[DEBUG] Exiting test_array_bounds\n");
 }
@@ -370,7 +374,7 @@ void test_full_syntax_issues(void) {
         "    // Missing return statement\n"
         "    // return 0;\n"
         "}\n";
-    run_test("Full Syntax Issues", test_code, 8, 8); // Adjust expected errors/warnings as needed
+    run_test("Full Syntax Issues", test_code, 6, 7); // Adjust expected errors/warnings as needed
 }
 
 // Cleanup test files

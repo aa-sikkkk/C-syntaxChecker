@@ -1,376 +1,260 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Code Analysis Report</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        .code-line:hover {
-            background-color: #f3f4f6;
-        }
-        .error-line {
-            border-left: 4px solid #ef4444;
-            background-color: #fee2e2;
-        }
-        .warning-line {
-            border-left: 4px solid #f59e0b;
-            background-color: #fef3c7;
-        }
-        .success-line {
-            border-left: 4px solid #10b981;
-            background-color: #d1fae5;
-        }
-        .collapsible {
-            cursor: pointer;
-            padding: 18px;
-            width: 100%;
-            border: none;
-            text-align: left;
-            outline: none;
-            background-color: #f8fafc;
-            border-radius: 4px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .active, .collapsible:hover {
-            background-color: #e2e8f0;
-        }
-        .content {
-            padding: 0 18px;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.2s ease-out;
-            background-color: white;
-        }
-        #file-input {
-            display: none;
-        }
-        .issue-card {
-            border-radius: 8px;
-            padding: 12px;
-            margin-bottom: 8px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-        }
-        .code-block {
-            font-family: 'Courier New', Courier, monospace;
-            background-color: #1f2937;
-            color: #e5e7eb;
-            padding: 12px;
-            border-radius: 4px;
-            margin: 8px 0;
-            overflow-x: auto;
-        }
-        .line-number {
-            color: #9ca3af;
-            margin-right: 12px;
-            user-select: none;
-        }
-        .issue-severity {
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        .severity-high {
-            background-color: #fee2e2;
-            color: #dc2626;
-        }
-        .severity-medium {
-            background-color: #fef3c7;
-            color: #d97706;
-        }
-        .severity-low {
-            background-color: #d1fae5;
-            color: #059669;
-        }
-    </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Code Analysis Report</title>
+<style>
+body{font-family:-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;background:#f5f6f8;color:#1f2328;}
+header{background:#24292e;color:#fff;padding:20px 28px;}
+header h1{margin:0;font-size:20px;}
+header p{margin:6px 0 0;opacity:.8;font-size:13px;}
+main{max-width:1000px;margin:24px auto;padding:0 16px;}
+.stats{display:flex;gap:12px;margin:0 0 24px;flex-wrap:wrap;}
+.stat{flex:1;min-width:120px;background:#fff;border:1px solid #d8dee4;border-radius:8px;padding:14px;text-align:center;}
+.stat b{display:block;font-size:26px;}
+.stat span{font-size:12px;color:#57606a;text-transform:uppercase;letter-spacing:.05em;}
+.err b{color:#cf222e;}.warn b{color:#bf8700;}.info b{color:#0969da;}.style b{color:#8250df;}.tot b{color:#1f2328;}
+h2{font-size:16px;border-bottom:1px solid #d8dee4;padding-bottom:8px;}
+.diag{background:#fff;border:1px solid #d8dee4;border-radius:8px;margin:8px 0;padding:12px 16px;}
+.diag .sev{font-size:11px;font-weight:700;text-transform:uppercase;border-radius:4px;padding:2px 8px;margin-right:8px;}
+.sev-Error{background:#ffebe9;color:#cf222e;}
+.sev-Warning{background:#fff8c5;color:#9a6700;}
+.sev-Info{background:#ddf4ff;color:#0969da;}
+.sev-Style{background:#fbefff;color:#8250df;}
+.diag .loc{color:#57606a;font-size:12px;}
+.diag .msg{margin-top:4px;}
+pre.code{background:#0d1117;color:#c9d1d9;border-radius:8px;padding:16px;overflow:auto;font-size:13px;line-height:1.5;}
+pre.code .ln{display:inline-block;width:3em;color:#484f58;text-align:right;margin-right:12px;user-select:none;}
+footer{text-align:center;color:#57606a;font-size:12px;padding:24px 0 32px;}
+</style>
 </head>
-<body class="bg-gray-100 font-sans leading-normal tracking-normal">
-    <div class="container mx-auto p-4">
-        <header class="bg-white shadow-md rounded-md p-4 mb-4">
-            <h1 class="text-3xl font-bold mb-2">Code Analysis Report</h1>
-            <p class="text-gray-600">Generated on: <span id="generation-date"></span></p>
-            <div class="mt-4">
-                <label for="file-input" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer">
-                    Select Analysis File
-                </label>
-                <input type="file" id="file-input" accept=".txt">
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="bg-white p-4 rounded-md shadow-md">
-                <h3 class="text-lg font-semibold mb-2">Code Metrics</h3>
-                <div class="space-y-2">
-                    <p>Total Lines: <span id="total-lines" class="font-semibold">0</span></p>
-                    <p>Functions: <span id="total-functions" class="font-semibold">0</span></p>
-                    <p>Variables: <span id="total-variables" class="font-semibold">0</span></p>
-                    <p>Complexity: <span id="complexity" class="font-semibold">0</span></p>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-md shadow-md">
-                <h3 class="text-lg font-semibold mb-2">Issue Summary</h3>
-                <div class="space-y-2">
-                    <p>Critical Issues: <span id="error-count" class="text-red-500 font-semibold">0</span></p>
-                    <p>Warnings: <span id="warning-count" class="text-yellow-500 font-semibold">0</span></p>
-                    <p>Suggestions: <span id="suggestion-count" class="text-blue-500 font-semibold">0</span></p>
-                </div>
-            </div>
-            <div class="bg-white p-4 rounded-md shadow-md">
-                <h3 class="text-lg font-semibold mb-2">Code Quality</h3>
-                <canvas id="complexity-chart"></canvas>
-            </div>
-        </div>
-
-        <div class="bg-white shadow-md rounded-md p-4 mb-4">
-            <h2 class="text-2xl font-bold mb-4">Detailed Analysis</h2>
-            
-            <div class="mb-4">
-                <button class="collapsible">
-                    <span>Code Overview</span>
-                    <span class="text-gray-500">▼</span>
-                </button>
-                <div class="content">
-                    <div class="code-block" id="code-content"></div>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <button class="collapsible">
-                    <span>Critical Issues</span>
-                    <span class="text-red-500" id="critical-count">0</span>
-                </button>
-                <div class="content">
-                    <div id="syntax-analysis" class="space-y-4"></div>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <button class="collapsible">
-                    <span>Memory & Safety</span>
-                    <span class="text-yellow-500" id="memory-count">0</span>
-                </button>
-                <div class="content">
-                    <div id="memory-analysis" class="space-y-4"></div>
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <button class="collapsible">
-                    <span>Code Style & Best Practices</span>
-                    <span class="text-blue-500" id="style-count">0</span>
-                </button>
-                <div class="content">
-                    <div id="style-analysis" class="space-y-4"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <script>
-        // Set generation date
-        document.getElementById('generation-date').textContent = new Date().toLocaleString();
-
-        // Initialize collapsible sections
-        document.querySelectorAll('.collapsible').forEach(button => {
-            button.addEventListener('click', function() {
-                this.classList.toggle('active');
-                const content = this.nextElementSibling;
-                if (content.style.maxHeight) {
-                    content.style.maxHeight = null;
-                } else {
-                    content.style.maxHeight = content.scrollHeight + "px";
-                }
-            });
-        });
-
-        // Function to parse the output file content
-        function parseOutputContent(text) {
-            const lines = text.split('\n');
-            
-            let stats = {
-                totalLines: 0,
-                functions: 0,
-                variables: 0,
-                complexity: 0,
-                errors: 0,
-                warnings: 0,
-                suggestions: 0,
-                codeContent: [],
-                syntaxIssues: [],
-                memoryIssues: [],
-                styleIssues: []
-            };
-
-            lines.forEach(line => {
-                // Count functions
-                if (line.includes('Number of functions:')) {
-                    stats.functions = parseInt(line.split(':')[1].trim());
-                }
-                // Count variables
-                if (line.includes('Number of variables:')) {
-                    stats.variables = parseInt(line.split(':')[1].trim());
-                }
-                // Count complexity
-                if (line.includes('Cyclomatic Complexity:')) {
-                    stats.complexity = parseInt(line.split(':')[1].trim());
-                }
-                // Count errors and warnings
-                if (line.includes('Error:')) {
-                    stats.errors++;
-                    stats.syntaxIssues.push({
-                        type: 'error',
-                        line: line,
-                        severity: 'high'
-                    });
-                }
-                if (line.includes('Warning:')) {
-                    stats.warnings++;
-                    stats.memoryIssues.push({
-                        type: 'warning',
-                        line: line,
-                        severity: 'medium'
-                    });
-                }
-                // Collect code content
-                if (line.startsWith('Line ')) {
-                    stats.codeContent.push(line);
-                    stats.totalLines++;
-                }
-                // Collect style issues
-                if (line.includes('Variable naming convention') || 
-                    line.includes('Missing space') || 
-                    line.includes('Empty block')) {
-                    stats.suggestions++;
-                    stats.styleIssues.push({
-                        type: 'suggestion',
-                        line: line,
-                        severity: 'low'
-                    });
-                }
-            });
-
-            // If no complexity was found, calculate it based on control structures
-            if (stats.complexity === 0) {
-                stats.complexity = lines.filter(line => 
-                    line.includes('if') || 
-                    line.includes('for') || 
-                    line.includes('while') || 
-                    line.includes('switch')
-                ).length + 1; // Base complexity is 1
-            }
-
-            updateUI(stats);
-        }
-
-        // Function to create an issue card
-        function createIssueCard(issue) {
-            const severityClass = {
-                'high': 'severity-high',
-                'medium': 'severity-medium',
-                'low': 'severity-low'
-            }[issue.severity];
-
-            return `
-                <div class="issue-card bg-white">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="issue-severity ${severityClass}">${issue.severity.toUpperCase()}</span>
-                    </div>
-                    <p class="text-gray-800">${issue.line}</p>
-                </div>
-            `;
-        }
-
-        // Function to format code content
-        function formatCodeContent(lines) {
-            return lines.map(line => {
-                const lineNumber = line.split(':')[0].replace('Line ', '');
-                const content = line.split(':').slice(1).join(':').trim();
-                return `<div class="flex">
-                    <span class="line-number">${lineNumber}</span>
-                    <span>${content}</span>
-                </div>`;
-            }).join('');
-        }
-
-        // Function to update the UI with parsed data
-        function updateUI(stats) {
-            // Update summary statistics
-            document.getElementById('total-lines').textContent = stats.totalLines;
-            document.getElementById('total-functions').textContent = stats.functions;
-            document.getElementById('total-variables').textContent = stats.variables;
-            document.getElementById('complexity').textContent = stats.complexity;
-            document.getElementById('error-count').textContent = stats.errors;
-            document.getElementById('warning-count').textContent = stats.warnings;
-            document.getElementById('suggestion-count').textContent = stats.suggestions;
-
-            // Update issue counts in headers
-            document.getElementById('critical-count').textContent = stats.errors;
-            document.getElementById('memory-count').textContent = stats.warnings;
-            document.getElementById('style-count').textContent = stats.suggestions;
-
-            // Update code content
-            document.getElementById('code-content').innerHTML = formatCodeContent(stats.codeContent);
-
-            // Update syntax analysis
-            document.getElementById('syntax-analysis').innerHTML = stats.syntaxIssues
-                .map(issue => createIssueCard(issue))
-                .join('');
-
-            // Update memory analysis
-            document.getElementById('memory-analysis').innerHTML = stats.memoryIssues
-                .map(issue => createIssueCard(issue))
-                .join('');
-
-            // Update style analysis
-            document.getElementById('style-analysis').innerHTML = stats.styleIssues
-                .map(issue => createIssueCard(issue))
-                .join('');
-
-            // Update complexity chart
-            const ctx = document.getElementById('complexity-chart').getContext('2d');
-            new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Low', 'Medium', 'High'],
-                    datasets: [{
-                        data: [
-                            stats.complexity < 10 ? stats.complexity : 0,
-                            stats.complexity >= 10 && stats.complexity < 20 ? stats.complexity : 0,
-                            stats.complexity >= 20 ? stats.complexity : 0
-                        ],
-                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        },
-                        title: {
-                            display: true,
-                            text: 'Code Complexity Distribution'
-                        }
-                    }
-                }
-            });
-        }
-
-        // Handle file input
-        document.getElementById('file-input').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    parseOutputContent(e.target.result);
-                };
-                reader.readAsText(file);
-            }
-        });
-    </script>
+<body>
+<header>
+<h1>Code Analysis Report</h1>
+<p>File: test_syntax.c</p>
+</header>
+<main>
+<div class="stats">
+<div class="stat err"><b>6</b><span>Errors</span></div>
+<div class="stat warn"><b>7</b><span>Warnings</span></div>
+<div class="stat info"><b>37</b><span>Info</span></div>
+<div class="stat style"><b>2</b><span>Style</span></div>
+<div class="stat tot"><b>52</b><span>Total</span></div>
+</div>
+<h2>Source</h2>
+<pre class="code"><span class="ln">1</span>#include &lt;stdio.h&gt;
+<span class="ln">2</span>#include &lt;stdlib.h&gt;
+<span class="ln">3</span>
+<span class="ln">4</span>// Test file with various syntax issues
+<span class="ln">5</span>
+<span class="ln">6</span>int main() {
+<span class="ln">7</span>    // Missing semicolon
+<span class="ln">8</span>    int a = 5
+<span class="ln">9</span>    float b = 3.14
+<span class="ln">10</span>    
+<span class="ln">11</span>    // Mismatched brackets
+<span class="ln">12</span>    if (a &gt; b {
+<span class="ln">13</span>        printf(&quot;a is greater than b\n&quot;);
+<span class="ln">14</span>    else {
+<span class="ln">15</span>        printf(&quot;a is less than or equal to b\n&quot;);
+<span class="ln">16</span>    }
+<span class="ln">17</span>    
+<span class="ln">18</span>    // Nested brackets with issues
+<span class="ln">19</span>    for (int i = 0; i &lt; 5; i++) {
+<span class="ln">20</span>        if (i % 2 == 0) {
+<span class="ln">21</span>            printf(&quot;Even number: %d\n&quot;, i);
+<span class="ln">22</span>        } else {
+<span class="ln">23</span>            printf(&quot;Odd number: %d\n&quot;, i);
+<span class="ln">24</span>        }
+<span class="ln">25</span>    }
+<span class="ln">26</span>    
+<span class="ln">27</span>    // Array with mismatched brackets
+<span class="ln">28</span>    int arr[5 = {1, 2, 3, 4, 5};
+<span class="ln">29</span>    
+<span class="ln">30</span>    // Function call with unclosed parenthesis
+<span class="ln">31</span>    printf(&quot;Hello, World!\n&quot;
+<span class="ln">32</span>    
+<span class="ln">33</span>    // Memory leak - malloc without free
+<span class="ln">34</span>    char *str = malloc(50);
+<span class="ln">35</span>    strcpy(str, &quot;Hello&quot;);
+<span class="ln">36</span>    
+<span class="ln">37</span>    // Unsafe pointer usage
+<span class="ln">38</span>    int *ptr;
+<span class="ln">39</span>    *ptr = 10;  // Using uninitialized pointer
+<span class="ln">40</span>    
+<span class="ln">41</span>    // Array bounds issue
+<span class="ln">42</span>    int arr2[5];
+<span class="ln">43</span>    arr2[5] = 10;  // Out of bounds access
+<span class="ln">44</span>    
+<span class="ln">45</span>    // Type safety issue
+<span class="ln">46</span>    int x = 3.14;  // Implicit conversion
+<span class="ln">47</span>    
+<span class="ln">48</span>    // Poor naming convention
+<span class="ln">49</span>    int i = 0;
+<span class="ln">50</span>    int j = 1;
+<span class="ln">51</span>    
+<span class="ln">52</span>    // Missing return statement
+<span class="ln">53</span>    // return 0;
+<span class="ln">54</span>} </pre>
+<h2>Diagnostics</h2>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 54, column 1</span><div class="msg">Mismatched bracket: &#39;(&#39; at line 31 closed by &#39;}&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 28, column 12</span><div class="msg">Unclosed &#39;[&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 12, column 15</span><div class="msg">Unclosed &#39;{&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 12, column 8</span><div class="msg">Unclosed &#39;(&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 6, column 12</span><div class="msg">Unclosed &#39;{&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 6, column 2</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 8, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 9, column 6</span><div class="msg">C keyword &#39;float&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 12, column 6</span><div class="msg">C keyword &#39;if&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 14, column 6</span><div class="msg">C keyword &#39;else&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 19, column 6</span><div class="msg">C keyword &#39;for&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 19, column 11</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 20, column 10</span><div class="msg">C keyword &#39;if&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 22, column 12</span><div class="msg">C keyword &#39;else&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 28, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 34, column 6</span><div class="msg">C keyword &#39;char&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 38, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 42, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 46, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 49, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 50, column 6</span><div class="msg">C keyword &#39;int&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><div class="msg">Functions: 1, Prototypes: 0</div>
+</div>
+<div class="diag">
+<span class="sev sev-Style">Style</span><span class="loc">Line 8, column 10</span><div class="msg">Very short variable name &#39;a&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 8, column 10</span><div class="msg">Variable &#39;a&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Style">Style</span><span class="loc">Line 9, column 12</span><div class="msg">Very short variable name &#39;b&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 9, column 12</span><div class="msg">Variable &#39;b&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 19, column 15</span><div class="msg">Variable &#39;i&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 28, column 10</span><div class="msg">Variable &#39;arr&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 34, column 12</span><div class="msg">Variable &#39;str&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 38, column 11</span><div class="msg">Variable &#39;ptr&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 42, column 10</span><div class="msg">Variable &#39;arr2&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 46, column 10</span><div class="msg">Variable &#39;x&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 49, column 10</span><div class="msg">Variable &#39;i&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 50, column 10</span><div class="msg">Variable &#39;j&#39; declared</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><div class="msg">Total variable declarations: 10</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 19, column 6</span><div class="msg">Loop &#39;for&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 34, column 18</span><div class="msg">Memory allocation &#39;malloc&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 34, column 18</span><div class="msg">Return value of &#39;malloc&#39; not checked for NULL</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 13, column 10</span><div class="msg">Output function &#39;printf&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 15, column 10</span><div class="msg">Output function &#39;printf&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 21, column 14</span><div class="msg">Output function &#39;printf&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 23, column 14</span><div class="msg">Output function &#39;printf&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><span class="loc">Line 31, column 6</span><div class="msg">Output function &#39;printf&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><div class="msg">Cyclomatic complexity: 4</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 34, column 0</span><div class="msg">Potential memory leak: allocation without matching free</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 28, column 10</span><div class="msg">Variable &#39;arr&#39; declared but never used</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 46, column 10</span><div class="msg">Variable &#39;x&#39; declared but never used</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 49, column 10</span><div class="msg">Variable &#39;i&#39; declared but never used</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 50, column 10</span><div class="msg">Variable &#39;j&#39; declared but never used</div>
+</div>
+<div class="diag">
+<span class="sev sev-Error">Error</span><span class="loc">Line 39, column 7</span><div class="msg">Possible null pointer dereference: &#39;*ptr&#39;</div>
+</div>
+<div class="diag">
+<span class="sev sev-Warning">Warning</span><span class="loc">Line 43, column 6</span><div class="msg">Possible out-of-bounds array access: &#39;arr2[5]&#39; (size 5)</div>
+</div>
+<div class="diag">
+<span class="sev sev-Info">Info</span><div class="msg">Maximum nesting depth: 4</div>
+</div>
+</main>
+<footer>Generated by C-SyntaxChecker</footer>
 </body>
 </html>

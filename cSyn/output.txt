@@ -1,97 +1,120 @@
-Line 1: #include <stdio.h>
-Line 2: #include <stdlib.h>
-Line 3: Line 4: int main() {
-Line 5:     Line 6:     int a = 5
-Line 7:     float b = 3.14
-Line 8:     
-Line 9:     Line 10:     if (a > b {
-Line 11:         printf("a is greater than b\n");
-Line 12:     else {
-Line 13:         printf("a is less than or equal to b\n");
-Line 14:     }
-Line 15:     
-Line 16:     Line 17:     for (int i = 0; i < 5; i++) {
-Line 18:         if (i % 2 == 0) {
-Line 19:             printf("Even number: %d\n", i);
-Line 20:         } else {
-Line 21:             printf("Odd number: %d\n", i);
-Line 22:         }
-Line 23:     }
-Line 24:     
-Line 25:     Line 26:     int arr[5 = {1, 2, 3, 4, 5};
-Line 27:     
-Line 28:     Line 29:     printf("Hello, World!\n"
-Line 30:     
-Line 31:     Line 32:     char *str = malloc(50);
-Line 33:     strcpy(str, "Hello");
-Line 34:     
-Line 35:     Line 36:     int *ptr;
-Line 37:     *ptr = 10;  Line 38:     
-Line 39:     Line 40:     int arr2[5];
-Line 41:     arr2[5] = 10;  Line 42:     
-Line 43:     Line 44:     int x = 3.14;  Line 45:     
-Line 46:     Line 47:     int i = 0;
-Line 48:     int j = 1;
-Line 49:     
-Line 50:     Line 51:     Line 52: } Error: Mismatched brackets detected.
-Line 4: Found keyword 'int'
-Line 6: Found keyword 'int'
-Line 7: Found keyword 'float'
-Line 10: Found keyword 'if'
-Line 11: Found keyword 'int'
-Line 12: Found keyword 'else'
-Line 13: Found keyword 'int'
-Line 17: Found keyword 'int'
-Line 17: Found keyword 'for'
-Line 18: Found keyword 'if'
-Line 19: Found keyword 'int'
-Line 20: Found keyword 'else'
-Line 21: Found keyword 'int'
-Line 26: Found keyword 'int'
-Line 29: Found keyword 'int'
-Line 36: Found keyword 'int'
-Line 40: Found keyword 'int'
-Line 44: Found keyword 'int'
-Line 47: Found keyword 'int'
-Line 48: Found keyword 'int'
-Number of functions: 2
-Number of function prototypes: 7
-Line 11: Found keyword usage 'printf'
-Line 13: Found keyword usage 'printf'
-Line 19: Found keyword usage 'printf'
-Line 21: Found keyword usage 'printf'
-Line 29: Found keyword usage 'printf'
-Line 32: Found built-in function usage 'malloc'
-Line 11: Found print function usage
-Line 13: Found print function usage
-Line 19: Found print function usage
-Line 21: Found print function usage
-Line 29: Found print function usage
-Number of variables: 16
-Line 1: Missing semicolon at the end
-Line 2: Missing semicolon at the end
-Line 5: Missing semicolon at the end
-Line 6: Missing semicolon at the end
-Line 7: Missing semicolon at the end
-Line 8: Missing semicolon at the end
-Line 9: Missing semicolon at the end
-Line 15: Missing semicolon at the end
-Line 16: Missing semicolon at the end
-Line 24: Missing semicolon at the end
-Line 25: Missing semicolon at the end
-Line 27: Missing semicolon at the end
-Line 28: Missing semicolon at the end
-Line 29: Missing semicolon at the end
-Line 30: Missing semicolon at the end
-Line 31: Missing semicolon at the end
-Line 34: Missing semicolon at the end
-Line 35: Missing semicolon at the end
-Line 38: Missing semicolon at the end
-Line 39: Missing semicolon at the end
-Line 42: Missing semicolon at the end
-Line 43: Missing semicolon at the end
-Line 45: Missing semicolon at the end
-Line 46: Missing semicolon at the end
-Line 49: Missing semicolon at the end
-Line 50: Missing semicolon at the end
-Line 51: Missing semicolon at the end
+=== Analysis for: test_syntax.c ===
+
+--- Source Code ---
+Line 1: #include <stdio.h>
+Line 2: #include <stdlib.h>
+Line 3: 
+Line 4: // Test file with various syntax issues
+Line 5: 
+Line 6: int main() {
+Line 7:     // Missing semicolon
+Line 8:     int a = 5
+Line 9:     float b = 3.14
+Line 10:     
+Line 11:     // Mismatched brackets
+Line 12:     if (a > b {
+Line 13:         printf("a is greater than b\n");
+Line 14:     else {
+Line 15:         printf("a is less than or equal to b\n");
+Line 16:     }
+Line 17:     
+Line 18:     // Nested brackets with issues
+Line 19:     for (int i = 0; i < 5; i++) {
+Line 20:         if (i % 2 == 0) {
+Line 21:             printf("Even number: %d\n", i);
+Line 22:         } else {
+Line 23:             printf("Odd number: %d\n", i);
+Line 24:         }
+Line 25:     }
+Line 26:     
+Line 27:     // Array with mismatched brackets
+Line 28:     int arr[5 = {1, 2, 3, 4, 5};
+Line 29:     
+Line 30:     // Function call with unclosed parenthesis
+Line 31:     printf("Hello, World!\n"
+Line 32:     
+Line 33:     // Memory leak - malloc without free
+Line 34:     char *str = malloc(50);
+Line 35:     strcpy(str, "Hello");
+Line 36:     
+Line 37:     // Unsafe pointer usage
+Line 38:     int *ptr;
+Line 39:     *ptr = 10;  // Using uninitialized pointer
+Line 40:     
+Line 41:     // Array bounds issue
+Line 42:     int arr2[5];
+Line 43:     arr2[5] = 10;  // Out of bounds access
+Line 44:     
+Line 45:     // Type safety issue
+Line 46:     int x = 3.14;  // Implicit conversion
+Line 47:     
+Line 48:     // Poor naming convention
+Line 49:     int i = 0;
+Line 50:     int j = 1;
+Line 51:     
+Line 52:     // Missing return statement
+Line 53:     // return 0;
+Line 54: } 
+
+--- Diagnostics ---
+
+Error at line 54, col 1: Mismatched bracket: '(' at line 31 closed by '}'
+Error at line 28, col 12: Unclosed '['
+Error at line 12, col 15: Unclosed '{'
+Error at line 12, col 8: Unclosed '('
+Error at line 6, col 12: Unclosed '{'
+Info at line 6, col 2: C keyword 'int'
+Info at line 8, col 6: C keyword 'int'
+Info at line 9, col 6: C keyword 'float'
+Info at line 12, col 6: C keyword 'if'
+Info at line 14, col 6: C keyword 'else'
+Info at line 19, col 6: C keyword 'for'
+Info at line 19, col 11: C keyword 'int'
+Info at line 20, col 10: C keyword 'if'
+Info at line 22, col 12: C keyword 'else'
+Info at line 28, col 6: C keyword 'int'
+Info at line 34, col 6: C keyword 'char'
+Info at line 38, col 6: C keyword 'int'
+Info at line 42, col 6: C keyword 'int'
+Info at line 46, col 6: C keyword 'int'
+Info at line 49, col 6: C keyword 'int'
+Info at line 50, col 6: C keyword 'int'
+Info: Functions: 1, Prototypes: 0
+Style at line 8, col 10: Very short variable name 'a'
+Info at line 8, col 10: Variable 'a' declared
+Style at line 9, col 12: Very short variable name 'b'
+Info at line 9, col 12: Variable 'b' declared
+Info at line 19, col 15: Variable 'i' declared
+Info at line 28, col 10: Variable 'arr' declared
+Info at line 34, col 12: Variable 'str' declared
+Info at line 38, col 11: Variable 'ptr' declared
+Info at line 42, col 10: Variable 'arr2' declared
+Info at line 46, col 10: Variable 'x' declared
+Info at line 49, col 10: Variable 'i' declared
+Info at line 50, col 10: Variable 'j' declared
+Info: Total variable declarations: 10
+Info at line 19, col 6: Loop 'for'
+Info at line 34, col 18: Memory allocation 'malloc'
+Warning at line 34, col 18: Return value of 'malloc' not checked for NULL
+Info at line 13, col 10: Output function 'printf'
+Info at line 15, col 10: Output function 'printf'
+Info at line 21, col 14: Output function 'printf'
+Info at line 23, col 14: Output function 'printf'
+Info at line 31, col 6: Output function 'printf'
+Info: Cyclomatic complexity: 4
+Warning at line 34, col 0: Potential memory leak: allocation without matching free
+Warning at line 28, col 10: Variable 'arr' declared but never used
+Warning at line 46, col 10: Variable 'x' declared but never used
+Warning at line 49, col 10: Variable 'i' declared but never used
+Warning at line 50, col 10: Variable 'j' declared but never used
+Error at line 39, col 7: Possible null pointer dereference: '*ptr'
+Warning at line 43, col 6: Possible out-of-bounds array access: 'arr2[5]' (size 5)
+Info: Maximum nesting depth: 4
+
+--- Summary ---
+Errors:   6
+Warnings: 7
+Info:     37
+Style:    2
+Total:    52
+
